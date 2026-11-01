@@ -2,6 +2,10 @@
 
 Flurseg is an offline semantic segmentation dataset curation pipeline that distills Meta's Segment Anything Model 3 (SAM 3) teacher into high-quality training data for a lightweight custom student model (EoMT + DINOv3). Designed specifically for aerial drone imagery, handheld ground photos, and high-resolution orthophotography, Flurseg combines automated multi-scale zero-shot mask generation, domain-specific geometric and spectral refinement rules, multi-factor uncertainty estimation, and an efficient human-in-the-loop review interface. Training data, source images, and checkpoints remain strictly on the user's machine and are never uploaded or committed.
 
+## Built for SAMcloud
+
+Flurseg was built for [SAMcloud](https://github.com/AIhdproduction/SAMcloud), a local photogrammetry application that reconstructs 3D point clouds from drone, standard-camera, and 360-degree imagery with COLMAP, assigns semantic LAS classes with SAM 3, checks each class geometrically, and exports LAS files. Flurseg is a separate, standalone repository and does not need SAMcloud to run. Flurseg uses SAM 3 as a teacher to build a reviewed training dataset from the same kind of imagery (drone, phone, orthophotos) and trains a dedicated EoMT + DINOv3 segmentation model with your own classes. The trained model is intended to be used in SAMcloud for the semantic classification step, so the classification is learned from your own data instead of relying only on generic SAM 3 text prompts. The intended workflow is: collect images -> Flurseg prelabel + review -> train -> use the trained model in SAMcloud.
+
 ### How It Works
 
 The end-to-end dataset distillation process flows through the following stages:
@@ -13,7 +17,7 @@ The end-to-end dataset distillation process flows through the following stages:
 5. **Human Review:** An offline web application with superpixel assistance, keyboard workflows, and visual search allows rapid annotator corrections.
 6. **Training Pool:** Accepted and verified masks populate the deduplicated image pool.
 7. **Dataset Export:** Pool images are partitioned into session-stratified splits (train/val/test), sliced into 1024 px tiles, and exported with full frequency metadata.
-8. **Student Model:** The resulting dataset serves to train an Encoder-only Mask Transformer (EoMT; Kerssies et al., CVPR 2025) with DINOv3 ViT-L/16 backbone (via `train.bat`).
+8. **Student Model:** The resulting dataset serves to train an Encoder-only Mask Transformer (EoMT; Kerssies et al., CVPR 2025) with DINOv3 ViT-L/16 backbone (via `train.bat`). The trained model is then used in [SAMcloud](https://github.com/AIhdproduction/SAMcloud) for semantic point-cloud classification.
 
 For complete technical and architectural specifications, see [docs/architecture.md](docs/architecture.md).
 
@@ -232,7 +236,7 @@ flurseg/
 
 ### Class Catalogue
 
-Defined in `config/classes.yaml`:
+Defined in `config/classes.yaml`. The Cyclone code column is the class code used for the point-cloud export in SAMcloud:
 
 | ID | Class Name | Hex Swatch | Includes | Excludes | Cyclone Code |
 |---|---|---|---|---|---|
@@ -589,6 +593,8 @@ Public sample datasets specified in `config/samples.yaml` and documented in `NOT
 ---
 
 ## Training
+
+The exported model folder (train/runs/<run>/best) is what you use in SAMcloud.
 
 ### Architecture and Pretrained Base Checkpoint
 
