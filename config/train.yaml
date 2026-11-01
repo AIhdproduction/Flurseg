@@ -1,0 +1,39 @@
+# Training configuration for EoMT-DINOv3 semantic segmentation.
+model:
+  # Hugging Face checkpoint loaded only for a real training run.
+  pretrained: tue-mps/eomt-dinov3-ade-semantic-large-512
+  # Tests set this to true to construct a small random model without downloads.
+  tiny_random: false
+  image_mean: [0.485, 0.456, 0.406]
+  image_std: [0.229, 0.224, 0.225]
+dataset_split:
+  # Optional stable session overrides, for example: {drone/odm_zoo: test}
+  overrides: {}
+data:
+  crop_size: 768
+  scale_min: 0.5
+  scale_max: 2.0
+  color_jitter: 0.2
+training:
+  seed: 42
+  batch_size: 2
+  gradient_accumulation: 8
+  epochs_target: 60
+  total_steps: auto
+  warmup_steps: auto
+  eval_every: auto
+  patience: 8
+  head_lr: 0.0001
+  backbone_lr: 0.00001
+  layer_decay: 0.8
+  weight_decay: 0.05
+  max_grad_norm: 1.0
+  polynomial_power: 0.9
+loss:
+  mask_weight: 5.0
+  dice_weight: 5.0
+  class_weight: 2.0
+  no_object_weight: 0.1
+inference:
+  window_size: 768
+  stride: 384

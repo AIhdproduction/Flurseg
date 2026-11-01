@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flurseg Quality Report</title>
+  <style>
+    :root {
+      --bg: #111214;
+      --surface: #1a1c1f;
+      --surface-2: #23262a;
+      --surface-3: #2c3035;
+      --border: rgba(255, 255, 255, 0.1);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --text: #ecedee;
+      --text-muted: #a7acb2;
+      --accent: #60a5fa;
+      --accent-hover: #93c5fd;
+      --on-accent: #0b1220;
+      --focus-ring: #fbbf24;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --success: #34d399;
+      --font-ui: "Inter", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: var(--sp-5);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+      padding-bottom: var(--sp-4);
+      border-bottom: 1px solid var(--border-strong);
+      margin-bottom: var(--sp-5);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .meta-timestamp {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--sp-5);
+      font-size: 14px;
+    }
+
+    .alert-banner.danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fecaca;
+    }
+
+    .alert-banner.success {
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .badge.success {
+      background: var(--success);
+      color: #0b1220;
+    }
+
+    .badge.warning {
+      background: var(--warning);
+      color: #0b1220;
+    }
+
+    .badge.neutral {
+      background: var(--surface-3);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-6);
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+
+    .kpi-title {
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-value.danger {
+      color: var(--danger);
+    }
+
+    .kpi-value.success {
+      color: var(--success);
+    }
+
+    .kpi-sub {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-4) var(--sp-5);
+      margin-bottom: var(--sp-5);
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: var(--sp-3);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: var(--sp-4);
+    }
+
+    .chart-container {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-3);
+      margin-bottom: var(--sp-4);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--sp-3);
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .num {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .color-swatch {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--border);
+      margin-top: var(--sp-6);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Flurseg Quality Report</h1>
+        <div class="meta-timestamp">Generated: {{ metrics.generated_at }}</div>
+      </div>
+      <div>
+        {% if metrics.warning_flag %}
+          <span class="badge danger">Quality Warning</span>
+        {% else %}
+          <span class="badge success">Quality Nominal</span>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if metrics.warning_flag %}
+      <div class="alert-banner danger" role="alert">
+        <strong>Warning:</strong> Auto-accept spot check error rate exceeds the limit of
+        {{ "%.1f"|format(metrics.spot_check_error_limit * 100) }}%.
+        {% if metrics.spot_check.classes_above_limit %}
+          Affected classes:
+          {% for cid in metrics.spot_check.classes_above_limit %}
+            {{ cfg.class_by_id(cid|int).name }}{% if not loop.last %}, {% endif %}
+          {% endfor %}.
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="alert-banner success">
+        Auto-accept spot-check error rate is within acceptable limits (limit:
+        {{ "%.1f"|format(metrics.spot_check_error_limit * 100) }}%).
+      </div>
+    {% endif %}
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Total Images</div>
+        <div class="kpi-value">{{ "{:,}".format(metrics.status_counts.total) }}</div>
+        <div class="kpi-sub">{{ metrics.status_counts.by_status.auto_accepted }} auto-accepted, {{ metrics.status_counts.by_status.reviewed }} reviewed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Spot-Check Error Rate</div>
+        <div class="kpi-value {% if metrics.spot_check.total_error_rate > metrics.spot_check_error_limit %}danger{% else %}success{% endif %}">
+          {{ "%.2f"|format(metrics.spot_check.total_error_rate * 100) }}%
+        </div>
+        <div class="kpi-sub">Limit: {{ "%.1f"|format(metrics.spot_check_error_limit * 100) }}%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Avg Processing Time</div>
+        <div class="kpi-value">{{ "%.2f"|format(metrics.timing.avg_processing_seconds) }}s</div>
+        <div class="kpi-sub">{{ metrics.timing.total_images_processed }} images processed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Avg Review Time</div>
+        <div class="kpi-value">{{ "%.2f"|format(metrics.timing.avg_review_seconds) }}s</div>
+        <div class="kpi-sub">{{ metrics.timing.total_images_reviewed }} images reviewed</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Ingestion & Status Distribution -->
+    <div class="section">
+      <div class="section-title">
+        <span>Image Pipeline Statuses</span>
+        <span class="kpi-sub">{{ metrics.status_counts.total }} total images</span>
+      </div>
+      <p class="section-desc">Distribution of dataset candidates across ingestion and review pipeline states.</p>
+      <div class="chart-container">
+        {{ status_svg | safe }}
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Session</th>
+            <th>Type</th>
+            <th class="num">Total</th>
+            <th class="num">Ingested</th>
+            <th class="num">Prelabeled</th>
+            <th class="num">Auto Accepted</th>
+            <th class="num">Needs Review</th>
+            <th class="num">Reviewed</th>
+            <th class="num">Rejected</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in metrics.status_counts.breakdown %}
+            <tr>
+              <td><strong>{{ row.source }}</strong></td>
+              <td><code>{{ row.session }}</code></td>
+              <td>
+                {% if row.is_test_session %}
+                  <span class="badge warning">Test</span>
+                {% else %}
+                  <span class="badge neutral">Pool</span>
+                {% endif %}
+              </td>
+              <td class="num"><strong>{{ row.total }}</strong></td>
+              <td class="num">{{ row.by_status.ingested }}</td>
+              <td class="num">{{ row.by_status.prelabeled }}</td>
+              <td class="num">{{ row.by_status.auto_accepted }}</td>
+              <td class="num">{{ row.by_status.needs_review }}</td>
+              <td class="num">{{ row.by_status.reviewed }}</td>
+              <td class="num">{{ row.by_status.rejected }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="10" style="text-align: center; color: var(--text-muted);">No images recorded in manifest.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2: Class Pixel Distribution per Source -->
+    <div class="section">
+      <div class="section-title">
+        <span>Class Pixel Distribution</span>
+      </div>
+      <p class="section-desc">Semantic class pixel frequency aggregate computed from manifest class pixel counts.</p>
+      <div class="chart-container">
+        {{ class_svg | safe }}
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Cyclone Code</th>
+            <th class="num">Total Pixels</th>
+            <th class="num">Overall Share</th>
+            {% for src in metrics.class_distribution.by_source.keys() %}
+              <th class="num">{{ src }} Share</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in cfg.classes.classes if c.id != 255 %}
+            {% set cid_str = c.id|string %}
+            {% set count = metrics.class_distribution.total.get(cid_str, 0) %}
+            {% set share = metrics.class_distribution.percentages_total.get(cid_str, 0.0) %}
+            <tr>
+              <td>
+                <span class="color-swatch" style="background-color: {{ c.display_color }};"></span>
+                <strong>{{ c.name }}</strong>
+              </td>
+              <td><code>{{ c.cyclone_code }}</code></td>
+              <td class="num">{{ "{:,}".format(count) }}</td>
+              <td class="num">{{ "%.2f"|format(share * 100) }}%</td>
+              {% for src, p_map in metrics.class_distribution.percentages_by_source.items() %}
+                <td class="num">{{ "%.2f"|format(p_map.get(cid_str, 0.0) * 100) }}%</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 3: Spot-Check Error Rates -->
+    <div class="section">
+      <div class="section-title">
+        <span>Auto-Accept Spot-Check Error Rates</span>
+        <span class="kpi-sub">Limit: {{ "%.1f"|format(metrics.spot_check_error_limit * 100) }}%</span>
+      </div>
+      <p class="section-desc">
+        Pixel disagreement between automated prelabeling proposals and human ground truth on spot-check samples.
+      </p>
+      <div class="chart-container">
+        {{ error_svg | safe }}
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th class="num">Labelled Pixels</th>
+            <th class="num">Changed Pixels</th>
+            <th class="num">Error Rate</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in cfg.classes.classes if c.id != 255 %}
+            {% set cid_str = c.id|string %}
+            {% set lab = metrics.spot_check.per_class_labelled_pixels.get(cid_str, 0) %}
+            {% set chg = metrics.spot_check.per_class_changed_pixels.get(cid_str, 0) %}
+            {% set err = metrics.spot_check.per_class_error_rate.get(cid_str, 0.0) %}
+            <tr>
+              <td>
+                <span class="color-swatch" style="background-color: {{ c.display_color }};"></span>
+                <strong>{{ c.name }}</strong>
+              </td>
+              <td class="num">{{ "{:,}".format(lab) }}</td>
+              <td class="num">{{ "{:,}".format(chg) }}</td>
+              <td class="num {% if err > metrics.spot_check_error_limit and lab > 0 %}danger{% endif %}">
+                {{ "%.2f"|format(err * 100) }}%
+              </td>
+              <td>
+                {% if lab == 0 %}
+                  <span class="badge neutral">No Data</span>
+                {% elif err > metrics.spot_check_error_limit %}
+                  <span class="badge danger">Exceeds Limit</span>
+                {% else %}
+                  <span class="badge success">Pass</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="font-weight: 600; border-top: 2px solid var(--border-strong);">
+            <td>Total</td>
+            <td class="num">{{ "{:,}".format(metrics.spot_check.total_labelled_pixels) }}</td>
+            <td class="num">{{ "{:,}".format(metrics.spot_check.total_changed_pixels) }}</td>
+            <td class="num {% if metrics.spot_check.total_error_rate > metrics.spot_check_error_limit %}danger{% endif %}">
+              {{ "%.2f"|format(metrics.spot_check.total_error_rate * 100) }}%
+            </td>
+            <td>
+              {% if metrics.spot_check.total_labelled_pixels == 0 %}
+                <span class="badge neutral">No Data</span>
+              {% elif metrics.spot_check.total_error_rate > metrics.spot_check_error_limit %}
+                <span class="badge danger">Fail</span>
+              {% else %}
+                <span class="badge success">Pass</span>
+              {% endif %}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Section 4: Prompt and Class Precision vs Reviewed Masks -->
+    <div class="section">
+      <div class="section-title">
+        <span>SAM 3 Precision vs Reviewed Masks &amp; Suggested Thresholds</span>
+      </div>
+      <p class="section-desc">
+        Per-prompt and per-class precision computed from pixels won by SAM 3 proposals that remained the same class upon human review.
+        Suggested presence threshold is the lowest score bin whose precision reaches 90%.
+      </p>
+      <div class="chart-container">
+        {{ precision_svg | safe }}
+      </div>
+
+      <h3 style="font-size: 14px; font-weight: 600; margin: var(--sp-4) 0 var(--sp-2);">Per-Class Performance</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th class="num">Won Pixels</th>
+            <th class="num">Correct Pixels</th>
+            <th class="num">Precision</th>
+            <th class="num">Suggested Threshold</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in metrics.precision.per_class %}
+            <tr>
+              <td>
+                <span class="color-swatch" style="background-color: {{ item.display_color }};"></span>
+                <strong>{{ item.class_name }}</strong>
+              </td>
+              <td class="num">{{ "{:,}".format(item.won_pixels) }}</td>
+              <td class="num">{{ "{:,}".format(item.correct_pixels) }}</td>
+              <td class="num">{{ "%.1f"|format(item.precision * 100) }}%</td>
+              <td class="num">
+                {% if item.suggested_threshold is not none %}
+                  <code>{{ "%.2f"|format(item.suggested_threshold) }}</code>
+                {% else %}
+                  <span style="color: var(--text-muted);">&mdash;</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3 style="font-size: 14px; font-weight: 600; margin: var(--sp-5) 0 var(--sp-2);">Per-Prompt Performance</h3>
+      <table>
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Prompt Text</th>
+            <th>Class</th>
+            <th class="num">Won Pixels</th>
+            <th class="num">Correct Pixels</th>
+            <th class="num">Precision</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in metrics.precision.per_prompt %}
+            <tr>
+              <td class="num"><code>{{ item.index }}</code></td>
+              <td><code>"{{ item.prompt }}"</code></td>
+              <td>{{ item.class_name }}</td>
+              <td class="num">{{ "{:,}".format(item.won_pixels) }}</td>
+              <td class="num">{{ "{:,}".format(item.correct_pixels) }}</td>
+              <td class="num">{{ "%.1f"|format(item.precision * 100) }}%</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 5: Timing Statistics -->
+    <div class="section">
+      <div class="section-title">
+        <span>Processing &amp; Review Latency</span>
+      </div>
+      <p class="section-desc">Average and aggregate runtimes for automated prelabeling and human review.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th class="num">Images</th>
+            <th class="num">Average Duration</th>
+            <th class="num">Total Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Inference Prelabeling</strong></td>
+            <td class="num">{{ metrics.timing.total_images_processed }}</td>
+            <td class="num">{{ "%.2f"|format(metrics.timing.avg_processing_seconds) }}s</td>
+            <td class="num">{{ "%.1f"|format(metrics.timing.total_processing_seconds) }}s</td>
+          </tr>
+          <tr>
+            <td><strong>Human Review</strong></td>
+            <td class="num">{{ metrics.timing.total_images_reviewed }}</td>
+            <td class="num">{{ "%.2f"|format(metrics.timing.avg_review_seconds) }}s</td>
+            <td class="num">{{ "%.1f"|format(metrics.timing.total_review_seconds) }}s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      Flurseg Dataset Quality Report &bull; Self-contained document generated without external dependencies.
+    </div>
+  </div>
+</body>
+</html>

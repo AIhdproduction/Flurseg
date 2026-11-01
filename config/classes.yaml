@@ -1,0 +1,190 @@
+# Semantic class definitions used by inference, review, and dataset export.
+classes:
+  - id: 0
+    name: other
+    prompts:
+      - person
+      - pole
+      - street lamp
+      - traffic sign
+      - fence
+      - wall
+      - water
+      - swimming pool
+      - bench
+      - power line
+      - hydrant
+    includes: everything not covered by another class
+    excludes: ""
+    cyclone_code: 64
+    display_color: "#9E9E9E"
+    trainable: true
+  - id: 1
+    name: ground
+    prompts:
+      - bare soil
+      - dirt
+      - gravel
+      - sand
+      - mud
+      - dirt road
+      - excavation pit
+      - soil pile
+    includes: unsealed terrain, gravel, dirt roads, excavation pits, soil piles
+    excludes: paving, lawn
+    cyclone_code: 2
+    display_color: "#A0522D"
+    trainable: true
+  - id: 2
+    name: paved_surface
+    prompts:
+      - asphalt road
+      - sidewalk
+      - parking lot
+      - concrete pavement
+      - paving stones
+    includes: "sealed surfaces: asphalt, concrete, paving stones, slabs"
+    excludes: gravel, curb, covers
+    cyclone_code: 71
+    display_color: "#5C6BC0"
+    trainable: true
+  - id: 3
+    name: low_vegetation
+    prompts:
+      - grass
+      - lawn
+      - meadow
+      - shrub
+      - hedge
+      - crop field
+      - flower bed
+    includes: plants below about 3 m including hedges
+    excludes: tree canopy
+    cyclone_code: 3
+    display_color: "#9CCC65"
+    trainable: true
+  - id: 4
+    name: tree
+    prompts:
+      - tree
+      - tree canopy
+      - forest
+    includes: trees and forest including trunk
+    excludes: hedges
+    cyclone_code: 5
+    display_color: "#1B5E20"
+    trainable: true
+  - id: 5
+    name: building
+    prompts:
+      - roof
+      - building
+      - house
+      - facade
+      - garage
+      - solar panel
+      - chimney
+    includes: permanent buildings with roof and roof structures
+    excludes: containers, scaffolding
+    cyclone_code: 6
+    display_color: "#E53935"
+    trainable: true
+  - id: 6
+    name: vehicle
+    prompts:
+      - car
+      - truck
+      - van
+      - bus
+      - trailer
+      - motorcycle
+    includes: road vehicles including trucks on construction sites
+    excludes: excavators, cranes
+    cyclone_code: 91
+    display_color: "#FFEB3B"
+    trainable: true
+  - id: 7
+    name: construction
+    prompts:
+      - excavator
+      - crane
+      - construction machine
+      - scaffolding
+      - site container
+      - shipping container
+      - building materials
+      - formwork
+    includes: construction machines, scaffolding, containers, building material
+    excludes: soil piles, excavation pits
+    cyclone_code: 151
+    display_color: "#FF9800"
+    trainable: true
+  - id: 8
+    name: curb
+    prompts:
+      - curb
+      - curbstone
+      - kerb
+    includes: top and front face of curbstones
+    excludes: gutters made of paving stones
+    cyclone_code: 74
+    display_color: "#00BCD4"
+    trainable: true
+  - id: 9
+    name: road_marking
+    prompts:
+      - road marking
+      - lane marking
+      - crosswalk
+      - painted line
+      - parking space marking
+    includes: paint on the pavement
+    excludes: covers, curbs
+    cyclone_code: 82
+    display_color: "#FFFFFF"
+    trainable: true
+  - id: 10
+    name: utility_cover
+    prompts:
+      - manhole cover
+      - storm drain
+      - drain grate
+      - gully grate
+      - valve cover
+      - cable pit cover
+      - utility cover
+    includes: manhole covers, gullies, valve caps, cable pits, flush hydrant covers
+    excludes: standing hydrants
+    cyclone_code: 75
+    display_color: "#E040FB"
+    trainable: true
+  - id: 255
+    name: ignore
+    prompts: []
+    includes: uncertain or not checked, never trained
+    excludes: ""
+    cyclone_code: not exported
+    display_color: "#000000"
+    trainable: false
+
+# Highest-priority class first. Every trainable class occurs exactly once.
+priority:
+  - vehicle
+  - construction
+  - other
+  - building
+  - tree
+  - utility_cover
+  - curb
+  - road_marking
+  - low_vegetation
+  - paved_surface
+  - ground
+
+# Rules displayed in the review UI and retained with the dataset definition.
+labeling_rules:
+  - Shadows belong to the surface below.
+  - A car under a tree is tree because the canopy is visible from above.
+  - Gravel is always ground. Sealed surfaces are paved_surface and unsealed surfaces are ground.
+  - Soil piles and excavation pits are ground. Construction is only what disappears after construction.
+  - When in doubt use ignore and never guess.

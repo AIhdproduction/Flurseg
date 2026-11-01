@@ -1,0 +1,293 @@
+entries:
+- source: drone
+  session: odm_aukerman
+  filename: DSC00229.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00229.JPG
+  sha256: 8a0a0a8f78c66977657639823604fa21e715b809e3c9bcf6e7bdd61e4eda5787
+  size: 7896834
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00229.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00235.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00235.JPG
+  sha256: 50782b5cf2be949b550c446ee96a674f4a0c5cbf11a0a539185799ab81938bef
+  size: 7481710
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00235.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00240.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00240.JPG
+  sha256: c5ef07ecdb499ccd40f5bcc7b0947e05f00cdb78e6ffb0e1a6ed1ced1d6f8dbb
+  size: 7821091
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00240.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00246.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00246.JPG
+  sha256: 4422a0025ae74cf9d176aea4f0b2feccf21bb341268ef2be135b545f327f4ba0
+  size: 7083701
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00246.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00253.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00253.JPG
+  sha256: 114313499254bf57ecc3a9b656198abe37fae4b7935e8b7e97c936c0b8e14b00
+  size: 6300350
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00253.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00258.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00258.JPG
+  sha256: 7eabbb643a7288d508e7e516483ba151b663b6fc752378a514f0ff928f9ea70f
+  size: 7103590
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00258.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00264.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00264.JPG
+  sha256: c26ae627707bcdbc22f810f7caba23e3452e361663fc9fbaba5233ffc8662e3b
+  size: 7385868
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00264.JPG
+- source: drone
+  session: odm_aukerman
+  filename: DSC00270.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_aukerman/master/images/DSC00270.JPG
+  sha256: ef3cbbb9e3c7238488afa848062730cf680d5989a67d2477c50ed85f2c09eee2
+  size: 7477899
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC00270.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01605.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01605.JPG
+  sha256: 0bddd527c53505f10d22b18cac209c05dc7951ea6de57a62225daaa5c83fd029
+  size: 7855021
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01605.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01610.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01610.JPG
+  sha256: 827d501e55760be8038aa7de08e894082061b2c87807e431bb48e8729eaff804
+  size: 8235774
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01610.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01615.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01615.JPG
+  sha256: b59f7898be55a90423e177f4c93b53e4391395ce424685bbe872ed08e5418f49
+  size: 6028586
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01615.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01620.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01620.JPG
+  sha256: f2d6f7c9d9a9db5d34f848fbe01c16b53ac16d3f8a08f0e44068db41214ea704
+  size: 7412068
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01620.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01625.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01625.JPG
+  sha256: 6fe2700c568f248ffb70dba4a72761e5c628dcdc802f4664caa0149ff08141fb
+  size: 7667632
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01625.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01630.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01630.JPG
+  sha256: 83620f284d82e763fa738f784c20d8f66fc5199cc4bfa947be9008cf3ca79840
+  size: 7505828
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01630.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01635.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01635.JPG
+  sha256: 9fc881959972534f31f44e715f9fefb1c016b3205af08ea81de8a175d497e17e
+  size: 7987963
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01635.JPG
+- source: drone
+  session: odm_zoo
+  filename: DSC01640.jpg
+  url: https://raw.githubusercontent.com/OpenDroneMap/odm_data_zoo/master/images/DSC01640.JPG
+  sha256: 6be133a5e70ea7e64f1d1f68cb98e06ff6f4169497baf48661c6400e607407a3
+  size: 7590674
+  license: CC0-1.0
+  attribution: OpenDroneMap
+  title: DSC01640.JPG
+- source: ortho
+  session: swissimage_luzern_residential
+  filename: swissimage-dop10_2024_2665-1210_0.1_2056.tif
+  url: https://data.geo.admin.ch/ch.swisstopo.swissimage-dop10/swissimage-dop10_2024_2665-1210/swissimage-dop10_2024_2665-1210_0.1_2056.tif
+  sha256: 724c9513cec9432ecc047579823cb3c564e59817beebe4e71ba3a6076f355132
+  size: 35636326
+  license: swisstopo OGD, free use with attribution
+  attribution: "\xA9 swisstopo"
+  title: swissimage-dop10_2024_2665-1210_0.1_2056.tif
+- source: ortho
+  session: swissimage_seeland_agriculture
+  filename: swissimage-dop10_2024_2582-1208_0.1_2056.tif
+  url: https://data.geo.admin.ch/ch.swisstopo.swissimage-dop10/swissimage-dop10_2024_2582-1208/swissimage-dop10_2024_2582-1208_0.1_2056.tif
+  sha256: d07c3701a843c48374fc59661d0a30076f0f579b6e5a46d0c4b7eca5bcf77666
+  size: 35936121
+  license: swisstopo OGD, free use with attribution
+  attribution: "\xA9 swisstopo"
+  title: swissimage-dop10_2024_2582-1208_0.1_2056.tif
+- source: ortho
+  session: swissimage_zurich_oerlikon
+  filename: swissimage-dop10_2025_2683-1251_0.1_2056.tif
+  url: https://data.geo.admin.ch/ch.swisstopo.swissimage-dop10/swissimage-dop10_2025_2683-1251/swissimage-dop10_2025_2683-1251_0.1_2056.tif
+  sha256: 5b5e25439abdcb8dbba19b5d019f9bc0d5ea5f5ce8effe05870dd118ce95566e
+  size: 36216051
+  license: swisstopo OGD, free use with attribution
+  attribution: "\xA9 swisstopo"
+  title: swissimage-dop10_2025_2683-1251_0.1_2056.tif
+- source: phone
+  session: kerbs
+  filename: 2007-11-29_-_11-49_-_Bordstein_F10_-_1-60_sec_F3_8_Canon_PowerShot_A400_-001.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/b/bf/2007-11-29_-_11-49_-_Bordstein_F10_-_1-60_sec_F3%2C8_Canon_PowerShot_A400_-001.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: af2e8fbef3f391c4ae6edaba8d253eb8923c4c57d87ebe81955017bbb65240ab
+  size: 1361908
+  license: Public domain
+  attribution: Wolf Meusel
+  title: File:2007-11-29 - 11-49 - Bordstein F10 - 1-60 sec F3,8 Canon PowerShot A400
+    -001.JPG
+  file_page_url: https://commons.wikimedia.org/wiki/File:2007-11-29_-_11-49_-_Bordstein_F10_-_1-60_sec_F3,8_Canon_PowerShot_A400_-001.JPG
+- source: phone
+  session: kerbs
+  filename: BS_Strassenbegleitgruen.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/4/4e/BS_Strassenbegleitgruen.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: cf89daad4cb576f1ba62b1d2ae077ca6f27459cb64a09c9b8f0fd863d857fa69
+  size: 3387075
+  license: CC BY-SA 4.0
+  attribution: TeWeBs
+  title: File:BS Strassenbegleitgruen.JPG
+  file_page_url: https://commons.wikimedia.org/wiki/File:BS_Strassenbegleitgruen.JPG
+- source: phone
+  session: kerbs
+  filename: Bus_at_the_curb_at_Hallinden.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/2/28/Bus_at_the_curb_at_Hallinden.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: eb86d8ba1e95792da0306172c86fc4a4a196974e8b835bf51bd621ed0ed197e3
+  size: 17412517
+  license: CC BY-SA 4.0
+  attribution: W.carter
+  title: File:Bus at the curb at Hallinden.jpg
+  file_page_url: https://commons.wikimedia.org/wiki/File:Bus_at_the_curb_at_Hallinden.jpg
+- source: phone
+  session: kerbs
+  filename: Concrete_Curbs_-_PREFA_Sucany_-_Slovakia_05.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/9/9c/Concrete_Curbs_-_PREFA_Su%C4%8Dany_-_Slovakia_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: e7027847cf62356790eeb4394333f58084f8842cfa65c7cc79bb177cacc4ec03
+  size: 4583757
+  license: CC0
+  attribution: Oto Zapletal
+  title: "File:Concrete Curbs - PREFA Su\u010Dany - Slovakia 05.jpg"
+  file_page_url: https://commons.wikimedia.org/wiki/File:Concrete_Curbs_-_PREFA_Su%C4%8Dany_-_Slovakia_05.jpg
+- source: phone
+  session: streets_in_lucerne
+  filename: 00_701_Luzern_Kapellplatz_und_-gasse.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/2/2e/00_701_Luzern%2C_Kapellplatz_und_-gasse.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: 0b8bf10a80b749c39710dc50710e9f831f09601031e1ddc352774add57f2ae1c
+  size: 10064406
+  license: CC BY-SA 4.0
+  attribution: Falk2
+  title: File:00 701 Luzern, Kapellplatz und -gasse.jpg
+  file_page_url: https://commons.wikimedia.org/wiki/File:00_701_Luzern,_Kapellplatz_und_-gasse.jpg
+- source: phone
+  session: streets_in_lucerne
+  filename: 141009Chapel_Bridge_Lucerne_Switzerland11.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/6/6d/141009Chapel_Bridge%2C_Lucerne%2C_Switzerland11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: a0ef119b448c8e82d0ab1ca3a18d441c20f8e121ef9c016621d418379ddc5e3f
+  size: 7070357
+  license: CC BY-SA 4.0
+  attribution: "\uCD5C\uAD11\uBAA8"
+  title: File:141009Chapel Bridge, Lucerne, Switzerland11.jpg
+  file_page_url: https://commons.wikimedia.org/wiki/File:141009Chapel_Bridge,_Lucerne,_Switzerland11.jpg
+- source: phone
+  session: streets_in_lucerne
+  filename: 7318_-_Luzern_-_Hirschengraben_at_Klosterstrasse_-_Rutligasse.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/9/99/7318_-_Luzern_-_Hirschengraben_at_Klosterstrasse_-_R%C3%BCtligasse.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: 7dff511fc3ea2d150cb7b0de4329c5bfe81acab63bcb4885b153b0e8e5d1c479
+  size: 2724036
+  license: CC BY-SA 2.5
+  attribution: Andrew Bossi
+  title: "File:7318 - Luzern - Hirschengraben at Klosterstrasse - R\xFCtligasse.JPG"
+  file_page_url: https://commons.wikimedia.org/wiki/File:7318_-_Luzern_-_Hirschengraben_at_Klosterstrasse_-_R%C3%BCtligasse.JPG
+- source: phone
+  session: streets_in_lucerne
+  filename: 7320_-_Luzern_-_Pauluskirche_on_Obergrundstrasse.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/e/e5/7320_-_Luzern_-_Pauluskirche_on_Obergrundstrasse.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: 97dfb5613870c643fb7635b539bd7a87b59ad757c711a3b911e64f0a2b60784e
+  size: 2425139
+  license: CC BY-SA 2.5
+  attribution: Andrew Bossi
+  title: File:7320 - Luzern - Pauluskirche on Obergrundstrasse.JPG
+  file_page_url: https://commons.wikimedia.org/wiki/File:7320_-_Luzern_-_Pauluskirche_on_Obergrundstrasse.JPG
+- source: phone
+  session: streets_in_lucerne
+  filename: 7324_-_Luzern_-_Eichwaldstrasse_at_Obergrundstrasse.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/d/d5/7324_-_Luzern_-_Eichwaldstrasse_at_Obergrundstrasse.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: f7ee33fe3f00f48f36abd4b3dade8ee12078cae197c61323d266496075581e54
+  size: 4775406
+  license: CC BY-SA 2.5
+  attribution: Andrew Bossi
+  title: File:7324 - Luzern - Eichwaldstrasse at Obergrundstrasse.JPG
+  file_page_url: https://commons.wikimedia.org/wiki/File:7324_-_Luzern_-_Eichwaldstrasse_at_Obergrundstrasse.JPG
+- source: phone
+  session: streets_in_lucerne
+  filename: 7326_-_Luzern_-_Schaferweg_at_Eichwaldstrasse.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/e/e2/7326_-_Luzern_-_Sch%C3%A4ferweg_at_Eichwaldstrasse.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: 69fdcc7be2c81c9fea83cff1314ea4acb0e1ac1c63fabdc5ef11e1e51a80cc43
+  size: 3258942
+  license: CC BY-SA 2.5
+  attribution: Andrew Bossi
+  title: "File:7326 - Luzern - Sch\xE4ferweg at Eichwaldstrasse.JPG"
+  file_page_url: https://commons.wikimedia.org/wiki/File:7326_-_Luzern_-_Sch%C3%A4ferweg_at_Eichwaldstrasse.JPG
+- source: phone
+  session: streets_in_lucerne
+  filename: Gasse_in_Luzern_-_Fluss_im_Hintergrund_Schweiz_-_panoramio.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/8/80/Gasse_in_Luzern_-_Flu%C3%9F_im_Hintergrund%2C_Schweiz_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: 55da814835fad9998b196e645cea1881ae15c417d4947c795d2dd64ccf5f7f84
+  size: 1250347
+  license: CC BY-SA 3.0
+  attribution: zpunout
+  title: "File:Gasse in Luzern - Flu\xDF im Hintergrund, Schweiz - panoramio.jpg"
+  file_page_url: https://commons.wikimedia.org/wiki/File:Gasse_in_Luzern_-_Flu%C3%9F_im_Hintergrund,_Schweiz_-_panoramio.jpg
+- source: phone
+  session: streets_in_lucerne
+  filename: Hauptstrasse_2_in_Reussbuhl_Luzern.jpg
+  url: https://upload.wikimedia.org/wikipedia/commons/9/95/Hauptstrasse_2_in_Reussb%C3%BChl_Luzern.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original
+  sha256: 64eb294a0732aaa8f1af409cc122097429901088c65e7931592aa81e9cedca7f
+  size: 2099160
+  license: CC BY 4.0
+  attribution: Arkelin
+  title: "File:Hauptstrasse 2 in Reussb\xFChl Luzern.jpg"
+  file_page_url: https://commons.wikimedia.org/wiki/File:Hauptstrasse_2_in_Reussb%C3%BChl_Luzern.jpg

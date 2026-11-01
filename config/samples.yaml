@@ -1,0 +1,73 @@
+# Public sample dataset specification for Flurseg bootstrap and testing.
+samples:
+  - source: ortho
+    session: swissimage_zurich_oerlikon
+    url: https://data.geo.admin.ch/ch.swisstopo.swissimage-dop10/swissimage-dop10_2025_2683-1251/swissimage-dop10_2025_2683-1251_0.1_2056.tif
+    license: "swisstopo OGD, free use with attribution"
+    attribution: "© swisstopo"
+    window: [3000, 3000, 4096, 4096]
+    session_yaml:
+      area_type: urban
+      gsd_m: 0.1
+
+  - source: ortho
+    session: swissimage_luzern_residential
+    url: https://data.geo.admin.ch/ch.swisstopo.swissimage-dop10/swissimage-dop10_2024_2665-1210/swissimage-dop10_2024_2665-1210_0.1_2056.tif
+    license: "swisstopo OGD, free use with attribution"
+    attribution: "© swisstopo"
+    window: [3000, 3000, 4096, 4096]
+    session_yaml:
+      area_type: residential
+      gsd_m: 0.1
+
+  - source: ortho
+    session: swissimage_seeland_agriculture
+    url: https://data.geo.admin.ch/ch.swisstopo.swissimage-dop10/swissimage-dop10_2024_2582-1208/swissimage-dop10_2024_2582-1208_0.1_2056.tif
+    license: "swisstopo OGD, free use with attribution"
+    attribution: "© swisstopo"
+    window: [3000, 3000, 4096, 4096]
+    session_yaml:
+      area_type: agriculture
+      gsd_m: 0.1
+
+  - source: drone
+    session: odm_aukerman
+    type: github_dir
+    repo: OpenDroneMap/odm_data_aukerman
+    path: images
+    count: 8
+    stride: 5
+    license: CC0-1.0
+    attribution: OpenDroneMap
+    session_yaml:
+      test: false
+
+  - source: drone
+    session: odm_zoo
+    type: github_dir
+    repo: OpenDroneMap/odm_data_zoo
+    path: images
+    count: 8
+    stride: 5
+    license: CC0-1.0
+    attribution: OpenDroneMap
+    session_yaml:
+      test: true
+
+  - source: phone
+    session: streets_in_lucerne
+    type: commons_category
+    category: "Streets in Lucerne"
+    count: 8
+    min_width: 2000
+    session_yaml:
+      area_type: street
+
+  - source: phone
+    session: kerbs
+    type: commons_category
+    category: "Kerbs"
+    count: 4
+    min_width: 2000
+    session_yaml:
+      area_type: street

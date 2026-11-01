@@ -1,0 +1,24 @@
+[project]
+name = "flurseg"
+version = "0.1.0"
+description = "Local semantic-segmentation dataset preparation with human review."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "AGPL-3.0-or-later"
+authors = [{ name = "AIhdproduction" }]
+repository = "https://github.com/AIhdproduction/Flurseg"
+
+[project.scripts]
+flurseg = "flurseg.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "gpu: requires a CUDA-capable GPU and SAM 3 checkpoint",
+    "integration: exercises multiple components together",
+    "slow: synthetic performance acceptance coverage",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
