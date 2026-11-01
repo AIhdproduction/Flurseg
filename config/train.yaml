@@ -34,6 +34,14 @@ loss:
   dice_weight: 5.0
   class_weight: 2.0
   no_object_weight: 0.1
+  # Number of sampled valid points for matching and mask/dice losses.
+  num_points: 12544
+  # Multiplier for oversampling candidate valid points before uncertainty ranking.
+  oversample_ratio: 3.0
+  # Fraction of points selected from highest uncertainty (remaining are random valid points).
+  importance_sample_ratio: 0.75
+  # Compute and sum losses across intermediate EoMT prediction layers.
+  deep_supervision: true
 inference:
   window_size: 768
   stride: 384

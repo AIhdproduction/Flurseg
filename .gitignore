@@ -4,7 +4,6 @@ venv/
 __pycache__/
 .pytest_cache/
 .ruff_cache/
-.test_artifacts*/
 *.egg-info/
 
 # Local test artefacts
@@ -12,15 +11,15 @@ __pycache__/
 .test_artifacts*/
 
 # Runtime data and generated artifacts
-models/
-input/
-archive/
-work/
-review/
-train/
-reports/
-logs/
-flurseg.db*
+/models/
+/input/
+/archive/
+/work/
+/review/
+/train/
+/reports/
+/logs/
+/flurseg.db*
 *.log
 
 # Optional experimental exemplar content

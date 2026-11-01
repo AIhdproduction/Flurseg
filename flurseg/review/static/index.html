@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flurseg Review</title>
+  <link rel="stylesheet" href="/static/__STATIC_VERSION__/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="queue-panel" aria-label="Review queue">
+      <div class="panel-heading">
+        <h1>Flurseg</h1>
+        <span id="progress" class="numbers">0 done / 0 open</span>
+      </div>
+      <div class="tabs" role="tablist">
+        <button id="queue-tab" role="tab" aria-selected="true">Queue</button>
+        <button id="pool-tab" role="tab" aria-selected="false">Pool</button>
+      </div>
+      <label>Source <select id="source-filter"><option value="">All sources</option></select></label>
+      <label>Session <select id="session-filter"><option value="">All sessions</option></select></label>
+      <label>Reason
+        <select id="reason-filter">
+          <option value="">All reasons</option>
+          <option value="uncertain">Uncertain</option>
+          <option value="spot_check">Spot check</option>
+          <option value="test_session">Test session</option>
+        </select>
+      </label>
+      <p id="error-rate" class="numbers">Auto-accept error: 0.0%</p>
+      <nav id="queue-list" class="queue-list" aria-label="Images"></nav>
+    </aside>
+    <section class="canvas-panel" aria-label="Mask editor">
+      <canvas id="editor" tabindex="0" aria-label="Segmentation mask editor"></canvas>
+      <div id="status" class="status" aria-live="polite">Select an image from the queue.</div>
+    </section>
+    <aside class="tools-panel" aria-label="Editor controls">
+      <div class="panel-heading">
+        <h2>Classes</h2>
+        <button id="help-button" class="icon-button" aria-label="Open help"
+          title="Open help" aria-keyshortcuts="F1 ?">?</button>
+      </div>
+      <div id="palette" class="palette"></div>
+      <h2>Tools</h2>
+      <div class="tool-grid" id="tools">
+        <button data-tool="brush">Brush</button>
+        <button data-tool="superpixel">Superpixel</button>
+        <button data-tool="flood">Flood</button>
+        <button data-tool="polygon">Polygon</button>
+        <button data-tool="accept-region">Accept region</button>
+        <button data-tool="similar">Find similar</button>
+        <button data-tool="pan">Pan</button>
+        <button data-tool="eraser">Ignore eraser</button>
+      </div>
+      <div id="superpixel-control" class="segmented-control" role="group"
+        aria-label="Superpixel granularity">
+        <span class="control-label">Superpixels:</span>
+        <div class="segmented-buttons">
+          <button type="button" id="sp-fine" data-level="fine">Fine</button>
+          <button type="button" id="sp-coarse" data-level="coarse" class="active">Coarse</button>
+        </div>
+      </div>
+      <label>Brush size
+        <input id="brush-size" type="range" min="1" max="160" value="24">
+        <output id="brush-output">24 px</output>
+      </label>
+      <h2>Layers</h2>
+      <div id="layers" class="layers"></div>
+      <label>Mask opacity <input id="mask-opacity" type="range" min="0" max="100" value="55"></label>
+      <footer class="actions">
+        <button id="previous">Previous</button>
+        <button id="next">Next</button>
+        <button id="accept" class="primary">Accept</button>
+        <button id="skip">Skip</button>
+        <button id="reject" class="danger">Reject</button>
+      </footer>
+    </aside>
+  </main>
+  <dialog id="help-dialog">
+    <header>
+      <h2>Keyboard shortcuts</h2>
+      <button id="close-help" class="icon-button" aria-label="Close help" title="Close help">×</button>
+    </header>
+    <div id="help-content"></div>
+  </dialog>
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <script type="module" src="/static/__STATIC_VERSION__/main.js"></script>
+</body>
+</html>

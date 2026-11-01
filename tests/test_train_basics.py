@@ -65,7 +65,9 @@ def test_ignore_aware_loss_does_not_read_ignored_targets() -> None:
     changed[:, 0, 0] = 1
     valid = torch.ones(8, 8, dtype=torch.bool)
     valid[0, 0] = False
+    torch.manual_seed(4)
     first = ignore_aware_loss(masks, classes, [target], [torch.tensor([0])], [valid], _tiny_config().loss)
+    torch.manual_seed(4)
     second = ignore_aware_loss(masks, classes, [changed], [torch.tensor([0])], [valid], _tiny_config().loss)
     assert torch.equal(first.total, second.total)
 

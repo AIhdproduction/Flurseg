@@ -325,3 +325,145 @@ def test_warmup_auto_is_ten_percent_capped() -> None:
     assert sched_explicit.lr_lambdas[0](0) == pytest.approx(1 / 50)
     assert sched_explicit.lr_lambdas[0](49) == pytest.approx(1.0)
 
+
+def test_ignore_invariance_holds_under_fixed_seed() -> None:
+    """Changing target labels only inside ignore pixels leaves the loss unchanged."""
+    from flurseg.train.loss import ignore_aware_loss
+
+    config = _config(total_steps=1).loss
+    valid_mask = torch.ones((32, 32), dtype=torch.bool)
+    valid_mask[:8, :] = False
+
+    target1 = torch.zeros((1, 32, 32), dtype=torch.float32)
+    target1[0, 8:24, 8:24] = 1.0
+
+    target2 = target1.clone()
+    target2[0, :8, :] = 1.0
+
+    pred_masks = torch.randn(1, 8, 8, 8)
+    pred_classes = torch.randn(1, 8, 3)
+    class_labels = [torch.tensor([1], dtype=torch.long)]
+
+    torch.manual_seed(42)
+    loss1 = ignore_aware_loss(pred_masks, pred_classes, [target1], class_labels, [valid_mask], config)
+    torch.manual_seed(42)
+    loss2 = ignore_aware_loss(pred_masks, pred_classes, [target2], class_labels, [valid_mask], config)
+
+    assert torch.allclose(loss1.total, loss2.total, atol=1e-6)
+    assert torch.allclose(loss1.mask, loss2.mask, atol=1e-6)
+    assert torch.allclose(loss1.dice, loss2.dice, atol=1e-6)
+    assert torch.allclose(loss1.classification, loss2.classification, atol=1e-6)
+
+
+def test_deep_supervision_records_pairs_and_respects_flag(tmp_path: Path) -> None:
+    """Deep supervision records num_blocks+1 pairs and deep_supervision=False uses only the final pair."""
+    from flurseg.train.engine import train_step
+    from flurseg.train.loss import ignore_aware_loss
+
+    _write_dataset(tmp_path)
+    config = _config(total_steps=1, eval_every=1)
+    config_path = _write_config(tmp_path, config)
+    context = setup(tmp_path, config_path, config, resume=False, steps=1, dry_run=False)
+
+    loss = train_step(context)
+    assert loss is not None
+    assert hasattr(context, "latest_predictions")
+    expected_pairs = context.model.config.num_blocks + 1
+    assert len(context.latest_predictions) == expected_pairs
+
+    recorded = context.latest_predictions
+    final_masks, final_classes = recorded[-1]
+    assert context.loader is not None
+    batch = next(iter(context.loader))
+
+    cfg_no_deep = config.loss.model_copy(update={"deep_supervision": False})
+    torch.manual_seed(123)
+    loss_disabled = ignore_aware_loss(
+        final_masks,
+        final_classes,
+        batch["mask_labels"],
+        batch["class_labels"],
+        batch["valid_masks"],
+        cfg_no_deep,
+        auxiliary_predictions=recorded[:-1],
+    )
+    torch.manual_seed(123)
+    loss_final_only = ignore_aware_loss(
+        final_masks,
+        final_classes,
+        batch["mask_labels"],
+        batch["class_labels"],
+        batch["valid_masks"],
+        cfg_no_deep,
+        auxiliary_predictions=None,
+    )
+    assert torch.allclose(loss_disabled.total, loss_final_only.total, atol=1e-6)
+    assert torch.allclose(loss_disabled.mask, loss_final_only.mask, atol=1e-6)
+    assert torch.allclose(loss_disabled.dice, loss_final_only.dice, atol=1e-6)
+    assert torch.allclose(loss_disabled.classification, loss_final_only.classification, atol=1e-6)
+
+
+def test_sampled_points_never_hit_ignore_pixels() -> None:
+    """Point sampling for matching and importance sampling never selects ignore pixels."""
+    from flurseg.train.loss import sample_importance_points, sample_valid_pixels
+
+    valid = torch.zeros((64, 64), dtype=torch.bool)
+    valid[16:48, 16:48] = True
+
+    sampled_pixels = sample_valid_pixels(valid, count=2000)
+    assert len(sampled_pixels) == 2000
+    assert valid[sampled_pixels[:, 0], sampled_pixels[:, 1]].all()
+
+    pred_masks = torch.randn(2, 1, 16, 16)
+    _norm_coords, pix_coords = sample_importance_points(
+        pred_masks,
+        valid,
+        num_points=500,
+        oversample_ratio=3.0,
+        importance_sample_ratio=0.75,
+    )
+    assert pix_coords.shape == (2, 500, 2)
+    assert valid[pix_coords[..., 0], pix_coords[..., 1]].all()
+
+
+def test_sampling_works_with_fewer_valid_pixels_than_num_points() -> None:
+    """When a crop has fewer valid pixels than requested points, sampling with replacement succeeds."""
+    from flurseg.train.config import LossConfig
+    from flurseg.train.loss import ignore_aware_loss, sample_importance_points, sample_valid_pixels
+
+    valid = torch.zeros((32, 32), dtype=torch.bool)
+    valid[5, 5] = True
+    valid[10, 10] = True
+    valid[15, 15] = True
+    valid[20, 20] = True
+
+    requested_points = 500
+    sampled = sample_valid_pixels(valid, count=requested_points)
+    assert sampled.shape == (requested_points, 2)
+    assert valid[sampled[:, 0], sampled[:, 1]].all()
+
+    pred_masks = torch.randn(1, 1, 8, 8)
+    norm_coords, pix_coords = sample_importance_points(
+        pred_masks,
+        valid,
+        num_points=requested_points,
+        oversample_ratio=2.0,
+        importance_sample_ratio=0.5,
+    )
+    assert norm_coords.shape == (1, requested_points, 2)
+    assert pix_coords.shape == (1, requested_points, 2)
+    assert valid[pix_coords[..., 0], pix_coords[..., 1]].all()
+
+    target = torch.zeros((1, 32, 32), dtype=torch.float32)
+    target[0, 5, 5] = 1.0
+    cfg = LossConfig(num_points=100)
+    loss = ignore_aware_loss(
+        torch.randn(1, 8, 8, 8),
+        torch.randn(1, 8, 3),
+        [target],
+        [torch.tensor([1], dtype=torch.long)],
+        [valid],
+        cfg,
+    )
+    assert torch.isfinite(loss.total)
+
