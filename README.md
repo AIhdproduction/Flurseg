@@ -157,6 +157,12 @@ notes: "Industrial park mapping under clear sky."
     ```bat
     train.bat --dry-run
     ```
+  - Training measures every training mask once and uses LVIS-style repeat-factor sampling for
+    tiles containing rare classes. The run log records per-class tile coverage, pixel share, and
+    expected samples before and after resampling. Validation remains unaugmented and unresampled.
+  - Drone and orthophoto tiles receive all eight orientation-preserving dihedral variants. Phone
+    imagery stays upright, using only horizontal flips and small rotations; all sources receive
+    configurable brightness, contrast, saturation, gamma, hue, blur, and noise augmentation.
   - Additional training options via the CLI:
     ```bat
     venv\Scripts\python -m flurseg train [--config config/train.yaml] [--resume] [--steps <int>] [--dry-run]

@@ -34,13 +34,40 @@ class DataConfig(_Model):
     crop_size: int = Field(default=768, gt=0)
     scale_min: float = Field(default=0.5, gt=0)
     scale_max: float = Field(default=2.0, gt=0)
-    color_jitter: float = Field(default=0.2, ge=0, le=1)
+    color_jitter: float = Field(default=0, ge=0, le=1)
+    brightness: float = Field(default=0.3, ge=0, le=1)
+    contrast: float = Field(default=0.3, ge=0, le=1)
+    saturation: float = Field(default=0.2, ge=0, le=1)
+    gamma_min: float = Field(default=0.7, gt=0)
+    gamma_max: float = Field(default=1.4, gt=0)
+    hue: float = Field(default=0.02, ge=0, le=0.5)
+    gaussian_blur_prob: float = Field(default=0.1, ge=0, le=1)
+    gaussian_blur_sigma_min: float = Field(default=0.5, ge=0)
+    gaussian_blur_sigma_max: float = Field(default=1.2, ge=0)
+    gaussian_noise_prob: float = Field(default=0.1, ge=0, le=1)
+    gaussian_noise_std: float = Field(default=0.03, ge=0, le=1)
+    phone_rotation_degrees: float = Field(default=8.0, ge=0, le=45)
 
     @model_validator(mode="after")
     def validate_scale_range(self) -> DataConfig:
         if self.scale_min > self.scale_max:
             raise ValueError("scale_min must not exceed scale_max")
+        if self.gamma_min > self.gamma_max:
+            raise ValueError("gamma_min must not exceed gamma_max")
+        if self.gaussian_blur_sigma_min > self.gaussian_blur_sigma_max:
+            raise ValueError("gaussian_blur_sigma_min must not exceed gaussian_blur_sigma_max")
         return self
+
+
+class SamplingConfig(_Model):
+    """Configure repeat-factor sampling and rare-class crop selection."""
+
+    min_class_pixels: int = Field(default=200, ge=1)
+    threshold: float = Field(default=0.3, gt=0, le=1)
+    max_repeat: float = Field(default=5.0, ge=1)
+    boost_classes: list[str] = Field(default_factory=lambda: ["curb", "road_marking", "utility_cover"])
+    boost_factor: float = Field(default=1.5, ge=1)
+    rare_crop_prob: float = Field(default=0.5, ge=0, le=1)
 
 
 class TrainingConfig(_Model):
@@ -88,6 +115,7 @@ class TrainConfig(_Model):
     model: ModelConfig
     dataset_split: DatasetSplitConfig = Field(default_factory=DatasetSplitConfig)
     data: DataConfig = Field(default_factory=DataConfig)
+    sampling: SamplingConfig = Field(default_factory=SamplingConfig)
     training: TrainingConfig = Field(default_factory=TrainingConfig)
     loss: LossConfig = Field(default_factory=LossConfig)
     inference: InferenceConfig = Field(default_factory=InferenceConfig)

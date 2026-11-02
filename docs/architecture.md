@@ -100,9 +100,10 @@ flowchart LR
 - **Data Pipeline:**
   - Extracts 768x768 px crops from 1024x1024 px dataset tiles, padding smaller images with black pixels and ignored mask labels.
   - Random scale augmentation between 0.5 and 2.0.
-  - Horizontal flips (50% probability).
-  - Quarter rotations (`rot90`) and vertical flips applied only for nadir perspectives (`drone` and `ortho` sources); phone imagery retains upright orientation.
-  - Colour jitter (brightness and saturation within ±20%).
+  - Computes and caches per-tile class histograms when the training dataset opens. LVIS-style repeat factors oversample tiles containing classes that occur in few tiles; configured curb, road-marking, and utility-cover boosts apply before the repeat cap. Every epoch uses deterministic stochastic rounding from the run seed, and automatic step calculation uses the resampled epoch length. Validation is neither resampled nor augmented.
+  - Rare-class-aware crops retain a randomly positioned pixel from boosted or infrequent classes with configurable probability after scaling.
+  - Nadir perspectives (`drone` and `ortho`) uniformly use all eight dihedral transforms. Phone imagery remains upright, receiving only horizontal flips and small ±8 degree rotations with ignored mask borders; it never receives vertical flips or quarter turns.
+  - All training images receive configurable brightness (±0.3), contrast (±0.3), saturation (±0.2), gamma (0.7–1.4), hue shift (±0.02), and optional blur and Gaussian noise. These changes never affect masks.
   - Normalisation using standard ImageNet mean (`[0.485, 0.456, 0.406]`) and standard deviation (`[0.229, 0.224, 0.225]`).
 - **Loss Computation:**
   - Hungarian bipartite matching (`scipy.optimize.linear_sum_assignment`) between predicted mask queries and ground-truth masks.

@@ -13,7 +13,30 @@ data:
   crop_size: 768
   scale_min: 0.5
   scale_max: 2.0
-  color_jitter: 0.2
+  # Applied only to images, never to semantic masks.
+  brightness: 0.3
+  contrast: 0.3
+  saturation: 0.2
+  gamma_min: 0.7
+  gamma_max: 1.4
+  hue: 0.02
+  gaussian_blur_prob: 0.1
+  gaussian_blur_sigma_min: 0.5
+  gaussian_blur_sigma_max: 1.2
+  gaussian_noise_prob: 0.1
+  gaussian_noise_std: 0.03
+  # Phone imagery remains upright: horizontal flips and only small +/- 8 degree rotations.
+  phone_rotation_degrees: 8.0
+sampling:
+  # A class must occupy this many pixels in a tile before it affects repeat factors.
+  min_class_pixels: 200
+  # LVIS repeat threshold; classes in fewer than this fraction of tiles are upsampled.
+  threshold: 0.3
+  max_repeat: 5.0
+  boost_classes: [curb, road_marking, utility_cover]
+  boost_factor: 1.5
+  # Probability that a training crop is anchored on a rare-class pixel.
+  rare_crop_prob: 0.5
 training:
   seed: 42
   batch_size: 2

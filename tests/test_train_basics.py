@@ -32,12 +32,20 @@ from flurseg.train.loss import ignore_aware_loss
 
 
 def _tiny_config() -> TrainConfig:
-    return TrainConfig.model_validate({"model": {"pretrained": "offline", "tiny_random": True}, "data": {"crop_size": 32}, "inference": {"window_size": 32, "stride": 16}})
+    return TrainConfig.model_validate(
+        {
+            "model": {"pretrained": "offline", "tiny_random": True},
+            "data": {"crop_size": 32},
+            "inference": {"window_size": 32, "stride": 16},
+        }
+    )
 
 
 def test_training_config_rejects_invalid_scale_range() -> None:
     with pytest.raises(ValueError, match="scale_min"):
-        TrainConfig.model_validate({"model": {"pretrained": "offline"}, "data": {"scale_min": 2, "scale_max": 1}})
+        TrainConfig.model_validate(
+            {"model": {"pretrained": "offline"}, "data": {"scale_min": 2, "scale_max": 1}}
+        )
 
 
 def test_mask_targets_exclude_ignore_pixels() -> None:
@@ -50,7 +58,20 @@ def test_mask_targets_exclude_ignore_pixels() -> None:
 def test_phone_augmentation_never_rotates_or_flips_vertically() -> None:
     image = np.dstack([np.arange(16, dtype=np.uint8).reshape(4, 4)] * 3)
     mask = image[:, :, 0].copy()
-    config = DataConfig(crop_size=4, scale_min=1, scale_max=1, color_jitter=0)
+    config = DataConfig(
+        crop_size=4,
+        scale_min=1,
+        scale_max=1,
+        brightness=0,
+        contrast=0,
+        saturation=0,
+        gamma_min=1,
+        gamma_max=1,
+        hue=0,
+        gaussian_blur_prob=0,
+        gaussian_noise_prob=0,
+        phone_rotation_degrees=0,
+    )
     output_image, output_mask = augment_pair(image, mask, "phone", config, np.random.default_rng(9))
     assert output_image.shape == image.shape
     assert np.array_equal(output_image[:, :, 0], output_mask)
@@ -95,8 +116,14 @@ def test_metrics_ignore_and_registry_persist(tmp_path: Path) -> None:
     path = tmp_path / "train" / "split_registry.json"
     save_split_registry(path, registry)
     restored = load_split_registry(path, 42)
-    repeated = split_sessions(items + [{"id": "new", "source": "phone", "session": "next"}], registry=restored)
-    assert all(repeated.source_session_to_split[("drone", f"s{index}")] == result.source_session_to_split[("drone", f"s{index}")] for index in range(3))
+    repeated = split_sessions(
+        items + [{"id": "new", "source": "phone", "session": "next"}], registry=restored
+    )
+    assert all(
+        repeated.source_session_to_split[("drone", f"s{index}")]
+        == result.source_session_to_split[("drone", f"s{index}")]
+        for index in range(3)
+    )
 
 
 def test_train_batch_script_has_required_guards() -> None:
@@ -120,9 +147,29 @@ def test_tiny_training_writes_checkpoints_and_report(tmp_path: Path) -> None:
             cv2.imwrite(str(dataset / split / "images" / f"{name}.jpg"), image)
             cv2.imwrite(str(dataset / split / "masks" / f"{name}.png"), mask)
             metadata[name] = {"source": "phone", "split": split, "session": "session"}
-    manifest = {"ignore_index": 255, "dataset_version": 1, "classes": [{"id": 0, "name": "other", "color": "#000000"}, {"id": 1, "name": "ground", "color": "#ffffff"}], "tile_metadata": metadata}
+    manifest = {
+        "ignore_index": 255,
+        "dataset_version": 1,
+        "classes": [
+            {"id": 0, "name": "other", "color": "#000000"},
+            {"id": 1, "name": "ground", "color": "#ffffff"},
+        ],
+        "tile_metadata": metadata,
+    }
     (dataset / "dataset.json").write_text(json.dumps(manifest), encoding="utf-8")
-    config = _tiny_config().model_copy(update={"training": _tiny_config().training.model_copy(update={"batch_size": 1, "gradient_accumulation": 1, "total_steps": 1, "warmup_steps": 0, "eval_every": 1})})
+    config = _tiny_config().model_copy(
+        update={
+            "training": _tiny_config().training.model_copy(
+                update={
+                    "batch_size": 1,
+                    "gradient_accumulation": 1,
+                    "total_steps": 1,
+                    "warmup_steps": 0,
+                    "eval_every": 1,
+                }
+            )
+        }
+    )
     config_path = tmp_path / "config.yaml"
     config_path.write_text(yaml.safe_dump(config.model_dump(mode="json")), encoding="utf-8")
     run = run_training(tmp_path, config_path, config, steps=1)

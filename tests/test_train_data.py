@@ -12,7 +12,19 @@ def test_augmentation_keeps_image_and_mask_aligned_for_multiple_seeds() -> None:
     """Every paired geometric augmentation preserves a synthetic pixel pattern."""
     pattern = np.arange(64, dtype=np.uint8).reshape(8, 8)
     image = np.dstack([pattern, pattern, pattern])
-    config = DataConfig(crop_size=8, scale_min=1, scale_max=1, color_jitter=0)
+    config = DataConfig(
+        crop_size=8,
+        scale_min=1,
+        scale_max=1,
+        brightness=0,
+        contrast=0,
+        saturation=0,
+        gamma_min=1,
+        gamma_max=1,
+        hue=0,
+        gaussian_blur_prob=0,
+        gaussian_noise_prob=0,
+    )
     for seed in range(20):
         augmented_image, augmented_mask = augment_pair(
             image,
@@ -46,7 +58,19 @@ def test_nadir_tiles_can_rotate_or_flip_vertically() -> None:
     """At least one deterministic nadir seed applies a non-phone orientation change."""
     pattern = np.arange(16, dtype=np.uint8).reshape(4, 4)
     image = np.dstack([pattern, pattern, pattern])
-    config = DataConfig(crop_size=4, scale_min=1, scale_max=1, color_jitter=0)
+    config = DataConfig(
+        crop_size=4,
+        scale_min=1,
+        scale_max=1,
+        brightness=0,
+        contrast=0,
+        saturation=0,
+        gamma_min=1,
+        gamma_max=1,
+        hue=0,
+        gaussian_blur_prob=0,
+        gaussian_noise_prob=0,
+    )
     phone_orientations = {pattern.tobytes(), pattern[:, ::-1].tobytes()}
     transformed = {
         augment_pair(image, pattern, "ortho", config, np.random.default_rng(seed))[1].tobytes()

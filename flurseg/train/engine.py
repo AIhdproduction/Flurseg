@@ -384,7 +384,7 @@ def _make_loader(context: TrainingContext) -> None:
     context.loader = DataLoader(
         context.train_set,
         batch_size=context.batch_size,
-        shuffle=True,
+        shuffle=False,
         collate_fn=collate_samples,
     )
     context.iterator = iter(context.loader)
@@ -396,7 +396,8 @@ def _next_batch(context: TrainingContext) -> dict[str, Any]:
     try:
         return next(context.iterator)
     except StopIteration:
-        context.iterator = iter(context.loader)
+        context.train_set.set_epoch(context.train_set.epoch + 1)
+        _make_loader(context)
         return next(context.iterator)
 
 
@@ -427,6 +428,8 @@ def setup(
         config.data,
         config.model,
         training=True,
+        sampling_config=config.sampling,
+        sampling_seed=config.training.seed,
     )
     val_empty = bool(train_set.manifest.get("val_empty", False))
     if val_empty:
@@ -441,6 +444,8 @@ def setup(
             config.model,
             training=True,
             tile_ids=train_ids,
+            sampling_config=config.sampling,
+            sampling_seed=config.training.seed,
         )
         val_set = SegmentationDataset(
             dataset_root,
@@ -483,6 +488,8 @@ def setup(
             "WARNING: validation split is empty; using a deterministic internal holdout of "
             f"{len(val_set)} train tiles for evaluation."
         )
+    for line in train_set.sampling_summary_lines():
+        log(line)
 
     context = TrainingContext(
         root=root,
@@ -536,7 +543,6 @@ def train_step(context: TrainingContext) -> LossValues | None:
     """Perform one optimizer step, recovering once from a CUDA OOM if possible."""
     assert context.loader is not None
     context.model.train()
-    context.train_set.set_epoch(context.step // max(len(context.loader), 1))
     anneal_attention_masks(context.model, context.step, context.total_steps)
     context.optimizer.zero_grad(set_to_none=True)
     current: LossValues | None = None
@@ -736,11 +742,7 @@ def _dataset_summary(manifest: dict[str, Any]) -> tuple[dict[str, int], dict[str
     else:
         manifest_counts = manifest.get("tile_counts", {})
         by_split = manifest_counts.get("by_split", manifest_counts)
-        tile_counts = {
-            str(split): int(count)
-            for split, count in by_split.items()
-            if isinstance(count, int)
-        }
+        tile_counts = {str(split): int(count) for split, count in by_split.items() if isinstance(count, int)}
     return sources, {key: len(value) for key, value in sessions.items()}, tile_counts
 
 
