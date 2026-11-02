@@ -51,6 +51,11 @@ export function proposalDiscardedStatus() {
   return "Proposal discarded";
 }
 
+/** Return whether the editor should warn about a stale draft. */
+export function shouldShowStaleDraftBanner(maskSource, draftStale) {
+  return maskSource === "draft" && draftStale;
+}
+
 /** Create the mutable application state for one review session. */
 export function createState() {
   return {
@@ -67,17 +72,20 @@ export function createState() {
     layers: null,
     mask: null,
     maskChunks: new Map(),
+    maskSource: "proposal",
     meta: null,
     opacity: 0.55,
     pan: { x: 0, y: 0 },
     polygon: [],
     proposal: null,
     proposalChunks: new Map(),
+    proposalVersion: null,
     proposalMap: null,
     proposalWindow: null,
     renderDirtyChunks: new Set(),
     scale: 1,
     started: typeof performance !== "undefined" ? performance.now() : Date.now(),
+    draftStale: false,
     superpixelBuffers: { coarse: null, fine: null },
     superpixelIndex: null,
     superpixelIndices: { coarse: null, fine: null },

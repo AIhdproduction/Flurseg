@@ -101,12 +101,12 @@ refinement:
     curb_max_distance_px: 5 # Maximum distance from a paved-surface border for a curb.
   color:
     rule_id: 5 # Stable auto-change map rule identifier.
-    enabled: true # Use colour evidence for vegetation and optional marking growth.
-    exg_threshold: 0.08 # Normalised chromatic ExG threshold (2g-r-b, range -1 to 2).
-    marking_brightness_percentile: 90.0 # Legacy compatibility setting; not used for component-aware growth.
-    marking_growth: false # Keep SAM 3 road-marking masks intact unless optional gap filling is needed.
-    marking_min_contrast: 40 # Required mean V contrast above the surrounding paved-surface ring (0-255).
-    marking_max_saturation: 40 # Maximum mean HSV saturation for an optional marking-growth superpixel (0-255).
+    enabled: true # Use guarded colour evidence for ground, paving, and low vegetation.
+    exg_threshold: 0.15 # Minimum normalised chromatic ExG to convert ground or paving to low vegetation.
+    exg_low_threshold: -0.02 # Maximum normalised chromatic ExG to convert low vegetation back to ground.
+    min_brightness: 70 # Minimum mean HSV value of a superpixel before any colour conversion.
+    min_target_score: 0.25 # Minimum mean fused low-vegetation score required for a vegetation conversion.
+    min_region_px: 3000 # Minimum connected area of a colour conversion; smaller groups are restored.
   ortho:
     rule_id: 6 # Stable auto-change map rule identifier.
     enabled: true # Apply orthophoto-specific minimum dimensions.

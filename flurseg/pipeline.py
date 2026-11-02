@@ -157,7 +157,15 @@ def _process_record(record: dict[str, Any], cfg: Any, paths: Any, repository: Ma
     fusion_seconds = time.monotonic() - fusion_started
     refinement_started = time.monotonic()
     refined = refine(
-        RefinementContext(image, fused.mask, record["source"], record["gsd_m"], cfg.pipeline, _ids(cfg))
+        RefinementContext(
+            image,
+            fused.mask,
+            record["source"],
+            record["gsd_m"],
+            cfg.pipeline,
+            _ids(cfg),
+            class_scores=fused.scores,
+        )
     )
     coarse_superpixels = _compute_coarse_superpixels(image, cfg)
     prompt_winner, disagreement = _derive_class_maps(
@@ -265,7 +273,18 @@ def reprocess(paths: Any, cfg: Any, image_ids: list[str] | None = None) -> Pipel
                 fused = fuse(scores, image.shape[:2], cfg)
                 winners, std_per_class = artifact.read_score_diagnostics()
                 old_superpixels = artifact.read_superpixels() if (artifact.directory / "superpixels.npz").is_file() else None
-                refined = refine(RefinementContext(image, fused.mask, record["source"], record["gsd_m"], cfg.pipeline, _ids(cfg), old_superpixels))
+                refined = refine(
+                    RefinementContext(
+                        image,
+                        fused.mask,
+                        record["source"],
+                        record["gsd_m"],
+                        cfg.pipeline,
+                        _ids(cfg),
+                        old_superpixels,
+                        fused.scores,
+                    )
+                )
                 existing_coarse = artifact.read_superpixels_coarse()
                 coarse_superpixels = (
                     _compute_coarse_superpixels(image, cfg)

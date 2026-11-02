@@ -70,17 +70,27 @@ def build_router(service: ReviewService) -> APIRouter:
     @router.get("/images/{image_id}/mask")
     def mask(image_id: str) -> Response:
         try:
-            return Response(service.mask_bytes(image_id), media_type="application/octet-stream", headers={"Content-Encoding": "gzip"})
+            data, headers = service.mask_bytes(image_id)
+            return Response(data, media_type="application/octet-stream", headers={"Content-Encoding": "gzip", **headers})
         except ReviewError as error:
             return _error(error, 404)
 
     @router.put("/images/{image_id}/mask")
     async def save_mask(image_id: str, request: Request) -> Response:
         try:
-            service.save_draft(image_id, await request.body())
+            base_version = request.headers.get("X-Proposal-Version") or request.query_params.get("base_proposal_sha256")
+            service.save_draft(image_id, await request.body(), base_proposal_sha256=base_version)
             return Response(status_code=204)
         except ReviewError as error:
             return _error(error)
+
+    @router.delete("/images/{image_id}/draft")
+    def delete_draft(image_id: str) -> Response:
+        try:
+            data, headers = service.discard_draft(image_id)
+            return Response(data, media_type="application/octet-stream", headers={"Content-Encoding": "gzip", **headers})
+        except ReviewError as error:
+            return _error(error, 404)
 
     @router.get("/images/{image_id}/superpixels")
     def superpixels(image_id: str, level: str = "fine") -> Response:

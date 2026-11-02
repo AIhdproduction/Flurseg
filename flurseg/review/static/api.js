@@ -25,9 +25,10 @@ export async function apiJson(path, options = {}) {
 }
 
 /** Send an uncompressed mask buffer to the draft endpoint. */
-export async function saveMask(imageId, mask, keepalive = false) {
+export async function saveMask(imageId, mask, proposalVersion, keepalive = false) {
   return apiRequest(`/images/${imageId}/mask`, {
     method: "PUT",
+    headers: proposalVersion ? { "X-Proposal-Version": proposalVersion } : {},
     body: mask,
     keepalive,
   });

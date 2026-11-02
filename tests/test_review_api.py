@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import hashlib
+import json
+
 import numpy as np
 from fastapi.testclient import TestClient
 
 from flurseg.config import load_config
+from flurseg.io.atomic import atomic_save_png
 from flurseg.review.app import create_app
 from flurseg.segment.fake_backend import FakeBackend
 from tests.test_review_service import _record
@@ -84,6 +88,77 @@ def test_mask_put_validation_and_round_trip(tmp_root) -> None:
     valid = bytes([3]) * (300 * 300)
     assert client.put("/api/images/review/mask", content=valid).status_code == 204
     assert client.get("/api/images/review/mask").content == valid
+
+
+def test_mask_headers_mark_proposals_and_draft_versions(tmp_root) -> None:
+    """Mask responses expose draft provenance and stale-draft status."""
+    from flurseg.paths import RepoPaths
+
+    paths = RepoPaths.from_root(tmp_root)
+    _record(paths, "fresh")
+    _record(paths, "legacy")
+    client = TestClient(create_app(paths, load_config(paths)))
+
+    proposal = client.get("/api/images/fresh/mask")
+    version = proposal.headers["x-proposal-version"]
+    assert proposal.headers["x-mask-source"] == "proposal"
+    assert proposal.headers["x-draft-stale"] == "false"
+
+    draft = bytes([3]) * (300 * 300)
+    assert client.put(
+        "/api/images/fresh/mask", content=draft, headers={"X-Proposal-Version": version}
+    ).status_code == 204
+    metadata = json.loads((paths.review_dir / "fresh" / "draft_meta.json").read_text(encoding="utf-8"))
+    assert metadata["base_proposal_sha256"] == version
+    assert metadata["edited"] is True and metadata["saved_at"]
+
+    fresh = client.get("/api/images/fresh/mask")
+    assert fresh.headers["x-mask-source"] == "draft"
+    assert fresh.headers["x-draft-stale"] == "false"
+
+    changed_proposal = np.full((300, 300), 4, dtype=np.uint8)
+    proposal_path = paths.work_dir / "fresh" / "proposed_mask.png"
+    atomic_save_png(proposal_path, changed_proposal)
+    stale = client.get("/api/images/fresh/mask")
+    assert stale.headers["x-mask-source"] == "draft"
+    assert stale.headers["x-draft-stale"] == "true"
+    assert stale.headers["x-proposal-version"] == hashlib.sha256(proposal_path.read_bytes()).hexdigest()
+
+    atomic_save_png(paths.review_dir / "legacy" / "draft_mask.png", np.full((300, 300), 2, dtype=np.uint8))
+    legacy = client.get("/api/images/legacy/mask")
+    assert legacy.headers["x-mask-source"] == "draft"
+    assert legacy.headers["x-draft-stale"] == "true"
+    queue = {item["id"]: item for item in client.get("/api/queue").json()}
+    assert queue["fresh"]["draft_stale"] is True
+    assert queue["legacy"]["draft_stale"] is True
+
+
+def test_delete_draft_archives_it_and_returns_the_proposal(tmp_root) -> None:
+    """Resetting a draft preserves it in history and restores the proposal."""
+    from flurseg.paths import RepoPaths
+
+    paths = RepoPaths.from_root(tmp_root)
+    _record(paths, "review")
+    client = TestClient(create_app(paths, load_config(paths)))
+    proposal = client.get("/api/images/review/mask")
+    draft = bytes([5]) * (300 * 300)
+    client.put(
+        "/api/images/review/mask",
+        content=draft,
+        headers={"X-Proposal-Version": proposal.headers["x-proposal-version"]},
+    )
+
+    deleted = client.delete("/api/images/review/draft")
+    history = paths.review_dir / "review" / "draft_history"
+    assert deleted.status_code == 200
+    assert deleted.content == proposal.content
+    assert deleted.headers["x-mask-source"] == "proposal"
+    assert deleted.headers["x-draft-stale"] == "false"
+    assert list(history.glob("*_draft_mask.png"))
+    assert not (paths.review_dir / "review" / "draft_mask.png").exists()
+    restored = client.get("/api/images/review/mask")
+    assert restored.content == proposal.content
+    assert restored.headers["x-mask-source"] == "proposal"
 
 
 def test_tile_edge_and_action_transitions(tmp_root) -> None:

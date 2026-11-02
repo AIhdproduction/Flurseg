@@ -289,6 +289,8 @@ Priority resolution applies only within `fusion.priority_margin` (default `0.15`
 
 The review application (`review.bat`) runs an interactive canvas featuring deep-zoom pyramid rendering, dual-level SLIC superpixels (fine and coarse), and instant mask toggling.
 
+Drafts are tied to the exact automatic proposal they were based on. If reprocessing improves a proposal after a draft was saved, the editor identifies the draft as outdated and offers **Use new proposal** or **Keep my draft**. Replaced drafts are retained under `review/<id>/draft_history/`.
+
 ### Complete Keyboard Shortcuts
 
 | Shortcut | Action | Description |

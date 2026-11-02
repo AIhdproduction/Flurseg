@@ -176,6 +176,50 @@ input[type="range"] {
   transform: translateX(-50%);
 }
 
+.mask-source {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font: 10px var(--font-mono);
+  margin-left: var(--sp-2);
+  padding: 2px 6px;
+}
+
+.mask-source.draft {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.draft-stale-banner {
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--warning);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+  color: var(--text);
+  display: flex;
+  gap: var(--sp-3);
+  left: 50%;
+  max-width: min(720px, calc(100% - 32px));
+  padding: var(--sp-2) var(--sp-3);
+  position: absolute;
+  top: var(--sp-3);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.draft-stale-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--sp-2);
+}
+
+.queue-item .draft-stale {
+  color: var(--warning);
+  font: 10px var(--font-mono);
+  margin-top: 3px;
+}
+
 .queue-list {
   display: flex;
   flex-direction: column;

@@ -31,8 +31,18 @@
       <nav id="queue-list" class="queue-list" aria-label="Images"></nav>
     </aside>
     <section class="canvas-panel" aria-label="Mask editor">
+      <div id="draft-stale-banner" class="draft-stale-banner" role="status" hidden>
+        <span>The automatic proposal was improved after your draft was saved.</span>
+        <div class="draft-stale-actions">
+          <button id="use-new-proposal" type="button">Use new proposal</button>
+          <button id="keep-draft" type="button">Keep my draft</button>
+        </div>
+      </div>
       <canvas id="editor" tabindex="0" aria-label="Segmentation mask editor"></canvas>
-      <div id="status" class="status" aria-live="polite">Select an image from the queue.</div>
+      <div id="status" class="status" aria-live="polite">
+        <span id="status-message">Select an image from the queue.</span>
+        <span id="mask-source" class="mask-source">Proposal</span>
+      </div>
     </section>
     <aside class="tools-panel" aria-label="Editor controls">
       <div class="panel-heading">

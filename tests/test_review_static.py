@@ -111,3 +111,12 @@ def test_proposal_threshold_is_shared_by_rendering_and_acceptance() -> None:
     assert "export const PROPOSAL_THRESHOLD = 128" in state
     assert "PROPOSAL_THRESHOLD" in render and 'from "./state.js"' in render
     assert "acceptProposalPixels" in main and "PROPOSAL_THRESHOLD" in main
+
+
+def test_stale_draft_banner_texts_are_present() -> None:
+    """The review UI explains stale drafts and offers both recovery actions."""
+    html = (Path(__file__).parents[1] / "flurseg" / "review" / "static" / "index.html").read_text(encoding="utf-8")
+    assert "The automatic proposal was improved after your draft was saved." in html
+    assert "Use new proposal" in html
+    assert "Keep my draft" in html
+    assert "mask-source" in html

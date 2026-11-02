@@ -270,11 +270,11 @@ class ContextConfig(StrictModel):
 class ColorConfig(StrictModel):
     rule_id: Literal[5]
     enabled: bool
-    exg_threshold: float = Field(ge=-1, le=2)
-    marking_brightness_percentile: float = Field(ge=0, le=100)
-    marking_growth: bool = False
-    marking_min_contrast: float = Field(default=40, ge=0, le=255)
-    marking_max_saturation: float = Field(default=40, ge=0, le=255)
+    exg_threshold: float = Field(default=0.15, ge=-1, le=2)
+    exg_low_threshold: float = Field(default=-0.02, ge=-1, le=2)
+    min_brightness: float = Field(default=70, ge=0, le=255)
+    min_target_score: float = Field(default=0.25, ge=0, le=1)
+    min_region_px: int = Field(default=3000, ge=1)
 
 
 class OrthoRefinementConfig(StrictModel):

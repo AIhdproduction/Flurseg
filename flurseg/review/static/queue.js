@@ -28,6 +28,7 @@ export function renderQueue(container, items, selectedIndex, onSelect) {
     const uncertText = document.createElement("span");
     const bar = document.createElement("div");
     const value = document.createElement("span");
+    const staleDraft = document.createElement("small");
     const percent = Math.round((item.uncertain_fraction || 0) * 100);
 
     button.className = "queue-item";
@@ -47,6 +48,11 @@ export function renderQueue(container, items, selectedIndex, onSelect) {
     row.append(uncertText, bar);
 
     button.append(name, detail, row);
+    if (item.draft_stale) {
+      staleDraft.className = "draft-stale";
+      staleDraft.textContent = "outdated draft";
+      button.append(staleDraft);
+    }
     button.addEventListener("click", () => onSelect(index));
     return button;
   });

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -11,7 +13,7 @@ import cv2
 import numpy as np
 
 from flurseg.artifacts import ArtifactStore
-from flurseg.io.atomic import atomic_save_jpg, atomic_save_png
+from flurseg.io.atomic import atomic_save_jpg, atomic_save_png, atomic_write_json
 from flurseg.manifest.db import Database
 from flurseg.manifest.repo import ManifestRepository
 from flurseg.paths import RepoPaths, ensure_inside
@@ -64,6 +66,40 @@ class ReviewService:
 
     def _draft_path(self, image_id: str) -> Path:
         return self._review_dir(image_id) / "draft_mask.png"
+
+    def _draft_meta_path(self, image_id: str) -> Path:
+        return self._review_dir(image_id) / "draft_meta.json"
+
+    def _proposal_path(self, record: dict[str, Any]) -> Path:
+        return ensure_inside(self._work(record).directory / "proposed_mask.png", self.paths.root)
+
+    def _proposal_sha256(self, record: dict[str, Any]) -> str:
+        path = self._proposal_path(record)
+        if not path.is_file():
+            raise ReviewError("proposed mask is missing")
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _draft_metadata(self, image_id: str) -> dict[str, Any] | None:
+        path = self._draft_meta_path(image_id)
+        if not path.is_file():
+            return None
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        return value if isinstance(value, dict) else None
+
+    def _draft_is_stale(self, record: dict[str, Any]) -> bool:
+        if not self._draft_path(record["id"]).is_file():
+            return False
+        metadata = self._draft_metadata(record["id"])
+        base_version = metadata.get("base_proposal_sha256") if metadata else None
+        if not isinstance(base_version, str):
+            return True
+        try:
+            return base_version != self._proposal_sha256(record)
+        except ReviewError:
+            return True
 
     def _proposal(self, record: dict[str, Any]) -> np.ndarray:
         mask = self._work(record).read_mask("proposed_mask.png")
@@ -128,6 +164,8 @@ class ReviewService:
             database.__exit__(None, None, None)
         if reason is not None:
             rows = [row for row in rows if row["routing_reason"] == reason]
+        for row in rows:
+            row["draft_stale"] = self._draft_is_stale(row)
         return sorted(rows, key=lambda row: row["uncertain_fraction"] if row["uncertain_fraction"] is not None else -1, reverse=True)
 
     def pool(self) -> list[dict[str, Any]]:
@@ -148,8 +186,18 @@ class ReviewService:
         record = self._record(image_id)
         return Pyramid(self.paths, image_id, self._work(record).directory).tile(layer, level, x, y)
 
-    def mask_bytes(self, image_id: str) -> bytes:
-        return gzip.compress(self._working_mask(self._record(image_id)).tobytes())
+    def mask_bytes(self, image_id: str) -> tuple[bytes, dict[str, str]]:
+        record = self._record(image_id)
+        proposal_version = self._proposal_sha256(record)
+        draft = self._draft_path(image_id)
+        draft_mask = cv2.imread(str(draft), cv2.IMREAD_UNCHANGED) if draft.is_file() else None
+        source = "draft" if draft_mask is not None else "proposal"
+        working = draft_mask.astype(np.uint8) if draft_mask is not None else self._proposal(record)
+        return gzip.compress(working.tobytes()), {
+            "X-Mask-Source": source,
+            "X-Draft-Stale": str(self._draft_is_stale(record)).lower(),
+            "X-Proposal-Version": proposal_version,
+        }
 
     def superpixels_bytes(self, image_id: str, level: str = "fine") -> bytes:
         if level not in {"fine", "coarse"}:
@@ -169,7 +217,7 @@ class ReviewService:
             raise ReviewError("proposal classes are missing")
         return gzip.compress(mask.astype(np.uint8).tobytes())
 
-    def save_draft(self, image_id: str, data: bytes) -> None:
+    def save_draft(self, image_id: str, data: bytes, *, base_proposal_sha256: str | None = None) -> None:
         record = self._record(image_id)
         expected = record["width"] * record["height"]
         if len(data) != expected:
@@ -180,6 +228,35 @@ class ReviewService:
         target = self._draft_path(image_id)
         ensure_inside(target, self.paths.root)
         atomic_save_png(target, mask)
+        atomic_write_json(
+            ensure_inside(self._draft_meta_path(image_id), self.paths.root),
+            {
+                "base_proposal_sha256": base_proposal_sha256 or self._proposal_sha256(record),
+                "edited": True,
+                "saved_at": _now(),
+            },
+        )
+
+    def discard_draft(self, image_id: str) -> tuple[bytes, dict[str, str]]:
+        """Archive a draft, if present, and return the current proposal bytes."""
+        record = self._record(image_id)
+        draft = self._draft_path(image_id)
+        metadata = self._draft_meta_path(image_id)
+        if draft.is_file():
+            history = ensure_inside(self._review_dir(image_id) / "draft_history", self.paths.root)
+            history.mkdir(parents=True, exist_ok=True)
+            timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+            archived_draft = ensure_inside(history / f"{timestamp}_draft_mask.png", self.paths.root)
+            draft.replace(archived_draft)
+            if metadata.is_file():
+                archived_metadata = ensure_inside(history / f"{timestamp}_draft_meta.json", self.paths.root)
+                metadata.replace(archived_metadata)
+        proposal = self._proposal(record)
+        return gzip.compress(proposal.tobytes()), {
+            "X-Mask-Source": "proposal",
+            "X-Draft-Stale": "false",
+            "X-Proposal-Version": self._proposal_sha256(record),
+        }
 
     @staticmethod
     def _changes(proposed: np.ndarray, edited: np.ndarray) -> dict[str, int]:

@@ -15,6 +15,7 @@ import {
   PROPOSAL_THRESHOLD,
   proposalAcceptedStatus,
   proposalDiscardedStatus,
+  shouldShowStaleDraftBanner,
 } from "./state.js";
 import {
   acceptRegion,
@@ -29,7 +30,9 @@ import { fitImage, imagePoint, zoomAt } from "./viewport.js";
 
 const state = createState();
 const canvas = document.querySelector("#editor");
-const statusNode = document.querySelector("#status");
+const statusNode = document.querySelector("#status-message");
+const maskSourceNode = document.querySelector("#mask-source");
+const staleDraftBanner = document.querySelector("#draft-stale-banner");
 const toastNode = document.querySelector("#toast");
 const colors = {};
 let renderer;
@@ -37,6 +40,13 @@ let helpDialog;
 
 function status(message) {
   statusNode.textContent = message;
+}
+
+function updateMaskStatus() {
+  const isDraft = state.maskSource === "draft";
+  maskSourceNode.textContent = isDraft ? "Draft" : "Proposal";
+  maskSourceNode.classList.toggle("draft", isDraft);
+  staleDraftBanner.hidden = !shouldShowStaleDraftBanner(state.maskSource, state.draftStale);
 }
 
 function toast(message) {
@@ -69,18 +79,54 @@ function scheduleSave() {
   status("Unsaved changes");
 }
 
-async function saveDraft(keepalive = false) {
-  if (!state.unsavedChanges || !state.mask || !state.meta) return;
+async function saveDraft(keepalive = false, force = false) {
+  if ((!state.unsavedChanges && !force) || !state.mask || !state.meta) return;
   window.clearTimeout(state.draftTimer);
   state.draftTimer = null;
   try {
-    await saveMask(state.meta.id, state.mask, keepalive);
+    await saveMask(state.meta.id, state.mask, state.proposalVersion, keepalive);
     state.unsavedChanges = false;
+    state.maskSource = "draft";
+    state.draftStale = false;
+    updateMaskStatus();
     status("Saved");
   } catch (error) {
     toast(error.message);
     status("Unsaved changes");
   }
+}
+
+async function loadMask(imageId) {
+  const response = await apiRequest(`/images/${imageId}/mask`);
+  state.mask = new Uint8Array(await response.arrayBuffer());
+  state.maskSource = response.headers.get("X-Mask-Source") || "proposal";
+  state.draftStale = response.headers.get("X-Draft-Stale") === "true";
+  state.proposalVersion = response.headers.get("X-Proposal-Version");
+  updateMaskStatus();
+}
+
+async function useNewProposal() {
+  if (!state.meta) return;
+  try {
+    await apiRequest(`/images/${state.meta.id}/draft`, { method: "DELETE" });
+    await loadMask(state.meta.id);
+    state.history = createHistory();
+    state.unsavedChanges = false;
+    state.maskChunks.clear();
+    state.renderDirtyChunks.clear();
+    state.items = state.items.map((item) => (
+      item.id === state.meta.id ? { ...item, draft_stale: false } : item
+    ));
+    renderQueue(document.querySelector("#queue-list"), state.items, state.index, loadImage);
+    status("Using new proposal");
+    requestRender();
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
+async function keepDraft() {
+  await saveDraft(false, true);
 }
 
 function selectedPoint(event) {
@@ -245,7 +291,7 @@ async function loadImage(index) {
   if (!item) return;
   state.index = index;
   state.meta = await apiJson(`/images/${item.id}`);
-  state.mask = await apiBytes(`/images/${item.id}/mask`);
+  await loadMask(item.id);
   state.proposal = await apiBytes(`/images/${item.id}/proposal-classes`);
   state.superpixelBuffers = { coarse: null, fine: null };
   state.superpixelIndices = { coarse: null, fine: null };
@@ -540,6 +586,10 @@ function bindControls() {
     ?.addEventListener("click", () => setSuperpixelGranularity("fine"));
   document.querySelector("#sp-coarse")
     ?.addEventListener("click", () => setSuperpixelGranularity("coarse"));
+  document.querySelector("#use-new-proposal")
+    ?.addEventListener("click", useNewProposal);
+  document.querySelector("#keep-draft")
+    ?.addEventListener("click", keepDraft);
 }
 
 const globals = {

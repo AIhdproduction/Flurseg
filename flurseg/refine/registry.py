@@ -18,6 +18,7 @@ class RefinementContext:
     config: object
     ids: dict[str, int]
     superpixels: np.ndarray | None = None
+    class_scores: dict[str, np.ndarray] | None = None
 
 
 @dataclass(slots=True)
@@ -35,7 +36,19 @@ def refine(context: RefinementContext) -> RefinementResult:
     paved_reference: np.ndarray | None = None
     rules = [
         (1, context.config.refinement.edge_snap, lambda value: edge_snap.apply(value, context.image, context.config.refinement.edge_snap, context.ids, superpixels)),
-        (5, context.config.refinement.color, lambda value: color_rules.apply(value, context.image, context.config.refinement.color, context.ids, superpixels, context.config.refinement.edge_snap)),
+        (
+            5,
+            context.config.refinement.color,
+            lambda value: color_rules.apply(
+                value,
+                context.image,
+                context.config.refinement.color,
+                context.ids,
+                superpixels,
+                context.config.refinement.edge_snap,
+                context.class_scores,
+            ),
+        ),
         (4, context.config.refinement.context, lambda value: context_rules.apply(value, context.config.refinement.context, context.ids, paved_reference)),
         (3, context.config.refinement.shape, lambda value: shape_rules.apply(value, context.gsd_m, context.config.refinement.shape, context.ids)),
         (6, context.config.refinement.ortho, lambda value: ortho_rules.apply(value, context.source, context.gsd_m, context.config.refinement.ortho, context.ids)),

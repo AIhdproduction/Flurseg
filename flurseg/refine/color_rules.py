@@ -1,6 +1,8 @@
-"""RGB colour-evidence refinements for surface and marking labels."""
+"""RGB colour-evidence refinements for ground, paved surfaces, and low vegetation."""
 
 from __future__ import annotations
+
+from collections.abc import Mapping
 
 import cv2
 import numpy as np
@@ -23,6 +25,25 @@ def _majority(mask: np.ndarray, labels: np.ndarray) -> np.ndarray:
     return counts.argmax(axis=1).astype(np.uint8)
 
 
+def _mean_by_label(values: np.ndarray, labels: np.ndarray, areas: np.ndarray) -> np.ndarray:
+    """Return one mean value for every superpixel label."""
+    return np.divide(
+        np.bincount(labels.ravel(), weights=values.ravel(), minlength=len(areas)),
+        areas,
+        out=np.zeros(len(areas), dtype=np.float64),
+        where=areas > 0,
+    )
+
+
+def _revert_small_regions(result: np.ndarray, original: np.ndarray, converted: np.ndarray, minimum: int) -> None:
+    """Restore conversion groups that do not meet the configured area threshold."""
+    count, components = cv2.connectedComponents(converted.astype(np.uint8), connectivity=8)
+    for component_id in range(1, count):
+        component = components == component_id
+        if int(component.sum()) < minimum:
+            result[component] = original[component]
+
+
 def apply(
     mask: np.ndarray,
     image: np.ndarray,
@@ -30,73 +51,54 @@ def apply(
     ids: dict[str, int],
     superpixels: np.ndarray | None = None,
     edge_config: object | None = None,
+    class_scores: Mapping[str, np.ndarray] | None = None,
 ) -> np.ndarray:
-    """Apply colour evidence per fine superpixel instead of to individual pixels."""
+    """Apply guarded colour evidence to ground, paved surfaces, and low vegetation only."""
     result = mask.copy()
     labels = compute_superpixels(image, edge_config) if superpixels is None else np.asarray(superpixels, dtype=np.int32)
     if labels.shape != mask.shape:
         raise ValueError("superpixels must match the mask shape")
+
+    vegetation = ids.get("low_vegetation")
+    ground = ids.get("ground")
+    paved = ids.get("paved_surface")
+    if vegetation is None or ground is None:
+        return result
+
+    label_count = int(labels.max()) + 1
+    areas = np.bincount(labels.ravel(), minlength=label_count)
     rgb = image.astype(np.float32)
     chroma = rgb.sum(axis=2, keepdims=True)
     chromatic = np.divide(rgb, chroma, out=np.zeros_like(rgb), where=chroma > 0)
     exg = 2 * chromatic[..., 1] - chromatic[..., 0] - chromatic[..., 2]
-    vegetation = ids.get("low_vegetation")
-    surface_names = ("ground", "paved_surface", "low_vegetation")
-    surface_ids = [ids[name] for name in surface_names if name in ids]
-    label_count = int(labels.max()) + 1
-    areas = np.bincount(labels.ravel(), minlength=label_count)
-    mean_exg = np.divide(
-        np.bincount(labels.ravel(), weights=exg.ravel(), minlength=label_count),
-        areas,
-        out=np.zeros(label_count, dtype=np.float64),
-        where=areas > 0,
-    )
+    brightness = rgb.max(axis=2)
+    mean_exg = _mean_by_label(exg, labels, areas)
+    mean_brightness = _mean_by_label(brightness, labels, areas)
+    bright = mean_brightness >= float(getattr(config, "min_brightness", 70))
     majority = _majority(result, labels)
-    eligible = np.isin(majority, surface_ids)
-    if vegetation is not None:
-        green_labels = eligible & (mean_exg >= float(config.exg_threshold))
-        result[np.isin(result, surface_ids) & green_labels[labels]] = vegetation
-        ground = ids.get("ground")
-        if ground is not None:
-            neutral_vegetation = eligible & (majority == vegetation) & ~green_labels
-            result[np.isin(result, surface_ids) & neutral_vegetation[labels]] = ground
-    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    brightness = hsv[..., 2].astype(np.float32)
-    saturation = hsv[..., 1].astype(np.float32)
-    paved = result == ids.get("paved_surface", -1)
-    marking = ids.get("road_marking")
-    if marking is not None and paved.any() and getattr(config, "marking_growth", False):
-        mean_brightness = np.divide(
-            np.bincount(labels.ravel(), weights=brightness.ravel(), minlength=label_count),
-            areas,
-            out=np.zeros(label_count, dtype=np.float64),
-            where=areas > 0,
-        )
-        mean_saturation = np.divide(
-            np.bincount(labels.ravel(), weights=saturation.ravel(), minlength=label_count),
-            areas,
-            out=np.zeros(label_count, dtype=np.float64),
-            where=areas > 0,
-        )
-        majority = _majority(result, labels)
-        candidate = (majority == ids.get("paved_surface", -1)) & (
-            mean_saturation <= float(getattr(config, "marking_max_saturation", 40))
-        )
-        component_count, components = cv2.connectedComponents((result == marking).astype(np.uint8))
-        dilation_kernel = np.ones((7, 7), np.uint8)
-        eligible_growth = np.zeros(label_count, dtype=bool)
-        for component_id in range(1, component_count):
-            component = components == component_id
-            dilated = cv2.dilate(component.astype(np.uint8), dilation_kernel) > 0
-            ring = dilated & ~component & paved
-            if not ring.any():
-                continue
-            overlap = np.bincount(labels[dilated], minlength=label_count)
-            overlaps_half = overlap >= (areas * 0.5)
-            ring_median = float(np.median(brightness[ring]))
-            eligible_growth |= overlaps_half & (
-                mean_brightness >= ring_median + float(getattr(config, "marking_min_contrast", 40))
-            )
-        candidate &= eligible_growth
-        result[paved & candidate[labels]] = marking
+    minimum_region_px = int(getattr(config, "min_region_px", 3000))
+
+    surface_sources = [ground]
+    if paved is not None:
+        surface_sources.append(paved)
+    target_labels = bright & (mean_exg >= float(getattr(config, "exg_threshold", 0.15)))
+    vegetation_scores = None if class_scores is None else class_scores.get("low_vegetation")
+    if vegetation_scores is not None:
+        if vegetation_scores.shape != mask.shape:
+            raise ValueError("low_vegetation scores must match the mask shape")
+        mean_target_score = _mean_by_label(vegetation_scores, labels, areas)
+        target_labels &= mean_target_score >= float(getattr(config, "min_target_score", 0.25))
+
+    to_vegetation = np.isin(mask, surface_sources) & target_labels[labels]
+    result[to_vegetation] = vegetation
+    _revert_small_regions(result, mask, to_vegetation, minimum_region_px)
+
+    to_ground_labels = (
+        bright
+        & (majority == vegetation)
+        & (mean_exg < float(getattr(config, "exg_low_threshold", -0.02)))
+    )
+    to_ground = (mask == vegetation) & to_ground_labels[labels]
+    result[to_ground] = ground
+    _revert_small_regions(result, mask, to_ground, minimum_region_px)
     return result

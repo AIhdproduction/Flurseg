@@ -163,6 +163,20 @@ def test_proposal_status_texts() -> None:
     )
 
 
+def test_stale_draft_banner_decision() -> None:
+    _run(
+        """
+        import { shouldShowStaleDraftBanner } from "./flurseg/review/static/state.js";
+        if (!shouldShowStaleDraftBanner("draft", true)) {
+          throw new Error("stale draft did not show the banner");
+        }
+        if (shouldShowStaleDraftBanner("proposal", true) || shouldShowStaleDraftBanner("draft", false)) {
+          throw new Error("banner shown for a current mask");
+        }
+        """,
+    )
+
+
 def test_proposal_window_and_count_limit_rendered_proposal_to_valid_response_data() -> None:
     _run(
         """
