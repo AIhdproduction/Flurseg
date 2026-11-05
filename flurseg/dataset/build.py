@@ -29,6 +29,7 @@ from flurseg.dataset.validate import MaskValidationError, validate_pool
 from flurseg.io.atomic import atomic_save_jpg, atomic_save_png, atomic_write_json
 from flurseg.io.images import load_image
 from flurseg.paths import RepoPaths, ensure_inside
+from flurseg.samples.extra.licences import is_acceptable_licence
 
 logger = logging.getLogger(__name__)
 
@@ -206,9 +207,51 @@ def _discover_pool_items(
             "is_test_session": is_test,
             "image_path": img_path,
             "mask_path": mask_path,
+            "hash": str(rec.get("hash") or ""),
+            "parent_hash": str(rec.get("parent_hash") or ""),
         })
 
     return items
+
+
+def _locked_licences(root: Path) -> dict[str, str]:
+    """Load optional fetch lockfiles as a SHA-256 to licence lookup."""
+    licences: dict[str, str] = {}
+    for name in ("samples.lock.yaml", "extra_sources.lock.yaml"):
+        path = root / "config" / name
+        if not path.is_file():
+            continue
+        try:
+            payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        except (OSError, yaml.YAMLError) as error:
+            logger.warning("Could not read licence lockfile %s: %s", path, error)
+            continue
+        for record in payload.get("entries", []) if isinstance(payload, dict) else []:
+            if not isinstance(record, dict):
+                continue
+            digest = str(record.get("sha256") or "").strip().lower()
+            licence = str(record.get("licence") or record.get("license") or "").strip()
+            if digest and licence:
+                licences[digest] = licence
+    return licences
+
+
+def _exclude_unacceptable_licences(
+    items: list[dict[str, Any]], root: Path
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Exclude only pool images tied to a locked non-compatible licence."""
+    locked = _locked_licences(root)
+    included: list[dict[str, Any]] = []
+    excluded: list[dict[str, str]] = []
+    for item in items:
+        digest = str(item.get("parent_hash") or item.get("hash") or "").lower()
+        licence = locked.get(digest)
+        if licence is not None and not is_acceptable_licence(licence):
+            excluded.append({"id": str(item["id"]), "hash": digest, "licence": licence})
+            logger.warning("excluded_licence id=%s licence=%s", item["id"], licence)
+            continue
+        included.append(item)
+    return included, excluded
 
 
 def build_dataset(
@@ -239,6 +282,7 @@ def build_dataset(
 
     db_path = getattr(paths, "database", root / "flurseg.db")
     items = _discover_pool_items(pool_images_dir, pool_masks_dir, db_path)
+    items, excluded_licence = _exclude_unacceptable_licences(items, root)
 
     # 2. Keep prior split assignments in a registry outside the rebuilt dataset tree.
     registry_path = root / "train" / "split_registry.json"
@@ -407,6 +451,7 @@ def build_dataset(
             {"source": source, "session": session, "split": split_res.source_session_to_split[(source, session)]}
             for source, session in split_res.new_sessions
         ],
+        "excluded_licence": excluded_licence,
     }
 
     # 7. Write dataset.json atomically
@@ -426,5 +471,7 @@ def build_dataset(
         f"Dataset v{registry['version']}: +{len(split_res.new_sessions)} sessions ({additions}), "
         f"train {tile_counts['train']} tiles, val {tile_counts['val']} tiles, test {tile_counts['test']}"
     )
+    if excluded_licence:
+        print(f"excluded_licence: {len(excluded_licence)} image(s)")
 
     return dataset_info

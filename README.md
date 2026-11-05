@@ -6,6 +6,8 @@ Flurseg is an offline semantic segmentation dataset curation pipeline that disti
 
 Flurseg was built for [SAMcloud](https://github.com/AIhdproduction/SAMcloud), a local photogrammetry application that reconstructs 3D point clouds from drone, standard-camera, and 360-degree imagery with COLMAP, assigns semantic LAS classes with SAM 3, checks each class geometrically, and exports LAS files. Flurseg is a separate, standalone repository and does not need SAMcloud to run. Flurseg uses SAM 3 as a teacher to build a reviewed training dataset from the same kind of imagery (drone, phone, orthophotos) and trains a dedicated EoMT + DINOv3 segmentation model with your own classes. The trained model is intended to be used in SAMcloud for the semantic classification step, so the classification is learned from your own data instead of relying only on generic SAM 3 text prompts. The intended workflow is: collect images -> Flurseg prelabel + review -> train -> use the trained model in SAMcloud.
 
+**Built with DINOv3.**
+
 ### How It Works
 
 The end-to-end dataset distillation process flows through the following stages:
@@ -125,6 +127,17 @@ notes: "Industrial park mapping under clear sky."
   prelabel.bat
   ```
   Ingests candidates, anonymizes phone images, computes SAM 3 dense scores, runs refinement, calculates uncertainty, routes images, and archives originals to `archive/`.
+  The command prints a preflight estimate before it starts. Use `--dry-run` to inspect it without processing,
+  `-y` to skip confirmation, `--max-hours H` to stop safely after the current image, `--limit N` for a
+  small run, and `--order spread|session` (default: `spread`). Processed originals are archived, so another
+  run continues with the remaining files. The estimate counts tiles and scales with the configured TTA and
+  uses `work/prelabel_timing.json` to calibrate recent runs with matching settings; it falls back to the
+  measured cost model when fewer than eight samples exist. Historical database `processing_seconds` values
+  are deliberately not used because they may have been recorded with a different TTA profile.
+  A full run over thousands of images can take days on one GPU, so `--max-hours` is the recommended way to
+  make progress safely. The relaxed auto-accept tolerance routes only the bad images to review; run
+  `flurseg reprocess` to re-route older images after changing it. The estimate is an upper bound because
+  duplicates are found only while processing, and those duplicates count with weight 0 in the live ETA.
 
 - **Human Review:**
   ```bat
@@ -366,7 +379,13 @@ Pipeline configuration settings are specified in `config/pipeline.yaml`, and stu
 | Key | Default | Meaning |
 |---|---|---|
 | `tile_size` | `1008` | Pixel size of each inference tile. |
-| `min_overlap` | `0.25` | Minimum fractional overlap between adjacent tiles. |
+| `min_overlap` | `0.10` | Minimum fractional overlap between adjacent tiles. |
+
+The fast profile uses 10% overlap and identity-only TTA. In the measured RTX 4090 benchmark it reduced a
+4896×3672 drone image to about 119 s and a 2048² image to about 43 s. Switch back to the more accurate,
+roughly four-times-slower profile by setting `tta.variants` to `[identity, rot90, hflip, vflip]` and
+`tiling.min_overlap` to `0.25`. The estimate starts from `2.9 × SAM passes + 1.5 × megapixels` seconds,
+then calibrates that model from recent runs with the current inference settings.
 
 ### `scales`
 | Factor | Classes | Meaning |
@@ -377,7 +396,7 @@ Pipeline configuration settings are specified in `config/pipeline.yaml`, and stu
 ### `tta`
 | Key | Default | Meaning |
 |---|---|---|
-| `variants` | `[identity, rot90, hflip, vflip]` | Supported transform names for test-time augmentation. |
+| `variants` | `[identity]` | Fast test-time augmentation profile. |
 
 ### `exemplars`
 | Key | Default | Meaning |
@@ -487,10 +506,13 @@ Pipeline configuration settings are specified in `config/pipeline.yaml`, and stu
 ### `routing`
 | Key | Default | Meaning |
 |---|---|---|
-| `auto_accept_max_uncertain_fraction` | `0.03` | Maximum uncertainty for automatic acceptance. |
-| `auto_accept_max_ignore_fraction` | `0.10` | Images with more ignore pixels always go to review. |
-| `spot_check_fraction` | `0.10` | Deterministic share sent to review for quality checks. |
+| `auto_accept_max_uncertain_fraction` | `0.06` | Slightly lenient maximum uncertainty for automatic acceptance. |
+| `auto_accept_max_ignore_fraction` | `0.15` | Slightly lenient ignore-pixel limit for automatic acceptance. |
+| `spot_check_fraction` | `0.04` | Deterministic share sent to review for meaningful quality checks. |
 | `seed` | `42` | Seed used for reproducible spot checks. |
+
+Only images that need review enter the review queue. The previous strict values were `0.03` / `0.10` /
+`0.10`; `flurseg reprocess` reapplies routing to existing unreviewed images after a configuration change.
 
 ### `review`
 | Key | Default | Meaning |
@@ -591,12 +613,42 @@ Pipeline configuration settings are specified in `config/pipeline.yaml`, and stu
 
 ---
 
-## Sample Data Licences
+## Licences: code, model and training data
 
-Public sample datasets specified in `config/samples.yaml` and documented in `NOTICE.md` carry the following licenses and attribution terms:
+- **Code (pipeline + training code):** GNU AGPL-3.0 (see [LICENSE](LICENSE)).
+- **Meta components:** DINOv3 (backbone) and SAM 3 (local teacher for pseudo-labels) remain under Meta's licences: the DINOv3 License and SAM License. They are not relicensed by Flurseg, and SAM 3 weights are not distributed.
+- **Trained model weights:** **Model weights: Hugging Face – link follows with the first release.** They are fine-tuned from `tue-mps/eomt-dinov3-ade-semantic-large-512` and distributed under the **DINOv3 License** (Meta), not AGPL. Releases include the DINOv3 License, visibly state **Built with DINOv3**, distribute derived weights only under its terms, and comply with its export-control and use restrictions.
+- **Training data:** never published, neither on GitHub nor Hugging Face; only the weights are published.
+- **Third-party data policy:** because the weights use the DINOv3 License, share-alike data is not used. Accepted: CC0, public domain, CC BY (all versions), Etalab Licence Ouverte 2.0, dl-de/zero-2.0, dl-de/by-2.0, swisstopo Open Government Data (free use with attribution), and NLOD 2.0 (Statens vegvesen Vegbilder). Rejected: all CC BY-SA versions (including Mapillary and most Panoramax/KartaView), ODbL, any NC/ND terms, research-only datasets (Cityscapes, Mapillary Vistas, BDD100K, KITTI, UAVid …), and videos without an explicit open licence (for example YouTube or Tesla dashcam footage). Older samples fetched under CC BY-SA are excluded automatically by the dataset-build licence gate. Per-file source, licence, and attribution are recorded in `config/samples.lock.yaml`, `config/extra_sources.lock.yaml`, and `reports/attribution/extra_sources.md`.
+
+Public sample datasets specified in `config/samples.yaml` and documented in `NOTICE.md` carry the following licences and attribution terms:
 - **swisstopo:** SWISSIMAGE orthophotos are provided under the Open Government Data (OGD) terms of the Swiss Confederation. Attribution requirement: **© swisstopo**.
 - **OpenDroneMap (ODM):** Aerial drone imagery from `OpenDroneMap/odm_data_aukerman` and `OpenDroneMap/odm_data_zoo` is released under the **Creative Commons CC0 1.0 Universal Public Domain Dedication**.
-- **Wikimedia Commons:** Street photographs are retrieved under open licenses (CC-BY, CC-BY-SA, or Public Domain). Per-file licenses and authors are recorded in each session's `session.yaml` notes and locked in `config/samples.lock.yaml`.
+- **Wikimedia Commons:** Street photographs are retrieved only under CC0, public domain, or CC BY licences. Per-file licences and authors are recorded in each session's `session.yaml` notes and locked in `config/samples.lock.yaml`.
+
+### More training data (`fetch-extra`)
+
+`fetch-extra` retrieves 2048 px orthophoto windows from configured WMS, XYZ/WMTS, ArcGIS export, and STAC COG sources. It also retrieves openly licensed phone-level imagery through IGN/Vee Panoramax, Amsterdam panoramas, Wikimedia Commons categories, Internet Archive video frames, selected RDD2022, Zenodo, Hugging Face dataset archives, and Norwegian Statens vegvesen Vegbilder under NLOD 2.0. Mapillary, KartaView, almost all Panoramax collections, and UK OGL sources remain excluded because their licences are not approved. Every item is checked against the policy licence, recorded in the extra lockfile, and listed in `reports/attribution/extra_sources.md`.
+
+Vegbilder caps count files already present in the session as well as new files. Existing feature IDs from the lockfile or canonical `<session>_<year>_<featureid>.jpg` names are skipped before their short-lived image URLs are downloaded, so a top-up adds only the remaining images.
+
+```bat
+fetch_extra.bat --dry-run
+fetch_extra.bat --only-id lu_geoportail -y
+venv\Scripts\python -m flurseg fetch-extra --dry-run --only-type commons_categories
+venv\Scripts\python -m flurseg fetch-extra --only-id ext_panoramax_paris_pleyel
+fetch_extra.bat -y
+```
+
+#### Your own dashcam/Tesla videos
+
+Use `extract_frames.bat PATH --session NAME` to extract full-resolution, de-duplicated frames from your own dashcam, Tesla, phone, or drone videos. Add `--source drone` for drone sessions and use `--dry-run` to inspect the planned timestamps. Phone and dashcam images are anonymised for faces and licence plates during `prelabel`.
+
+The dry run makes no image downloads; STAC metadata may be requested only when needed to plan a source.
+
+### Data sources for the model card
+
+Run `data_card.bat` to create `reports/model_card_data_sources.md`, ready to paste into the Hugging Face model card. Use `data_card.bat --only-used` after a dataset build to credit only images in that dataset.
 
 ---
 
@@ -670,11 +722,29 @@ Exported under `train/dataset/` into `train/`, `val/`, and `test/` splits:
 
 ### Model Licence
 
-Fine-tuned model weights derive from Meta's DINOv3 ViT-L/16 backbone; the **DINOv3 License** applies to all derived weights. A copy of the DINOv3 License must accompany any published or redistributed weights. Consult the DINOv3 License regarding commercial and prohibited use cases before redistribution.
+Fine-tuned model weights derive from Meta's DINOv3 ViT-L/16 backbone and are distributed under the **DINOv3 License**, not AGPL. A copy of that licence must accompany published weights; releases must visibly state **Built with DINOv3** and comply with its export-control and use restrictions.
 
 ---
 
 ## Development & Testing
+
+## Dedup
+
+Review redundant drone and phone images before pre-labelling without deleting data:
+
+```bat
+dedup.bat --source all
+dedup.bat --source drone --drone-mode overlap
+dedup.bat --source drone --apply
+dedup.bat --undo 20261103-120000
+```
+
+The first command is a dry run and writes a review page and CSV/JSON report below
+`reports/dedup/<run-id>/`. Applying a reviewed run moves only dropped images to
+`quarantine/dedup/<run-id>/`; `--undo` restores them unless an original path is occupied.
+Drone sessions use `--drone-mode stride` by default and keep every second image
+(`--drone-stride 2`). Use `--drone-mode overlap` for metadata-based footprint thinning.
+For photogrammetry walk-arounds, `--phone-stride N` keeps every N-th image in phone-session capture order; its default is 1, which leaves this thinning off. For example: `flurseg dedup --source phone --session 102ND800 --phone-stride 3`. `--burst-phash-threshold` defaults to 16 and controls when close-in-time phone images count as burst duplicates.
 
 - **Self-Test Suite:**
   ```bat

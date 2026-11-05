@@ -51,3 +51,15 @@ def test_pad_to_tile_and_crop_back_is_identity() -> None:
     padded, slices = pad_to_tile(image, 8)
     assert padded.shape == (8, 8, 3)
     assert np.array_equal(padded[slices[0], slices[1]], image)
+
+
+@pytest.mark.parametrize("width,height", [(1, 1), (1008, 1008), (1009, 1008), (4896, 3672)])
+def test_tiles_cover_images_with_ten_percent_overlap(width: int, height: int) -> None:
+    tile = 1008
+    overlap = 0.10
+    tiles = list(iter_tiles(width, height, tile, overlap))
+    assert tiles
+    assert max(item.x + item.width for item in tiles) == width
+    assert max(item.y + item.height for item in tiles) == height
+    for starts in (tile_starts(width, tile, overlap), tile_starts(height, tile, overlap)):
+        assert all(right - left <= tile - ceil(tile * overlap) for left, right in pairwise(starts))

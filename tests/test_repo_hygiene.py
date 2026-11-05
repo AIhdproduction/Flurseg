@@ -112,3 +112,13 @@ def test_runtime_folders_are_ignored() -> None:
         if line.strip()
     ]
     assert set(ignored_paths) == set(expected_ignored)
+
+
+def test_readme_states_the_dinov3_weight_policy() -> None:
+    """The public README states the model-weight licence policy consistently."""
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    assert "Built with DINOv3" in readme
+    assert "DINOv3 License" in readme
+    assert "CC BY-SA 4.0 (one-way compatible" not in readme
+    assert "NLOD 2.0" in readme and "data_card.bat" in readme
+    assert "Contains data under the Norwegian licence for open government data (NLOD)" in (REPO_ROOT / "NOTICE.md").read_text(encoding="utf-8")

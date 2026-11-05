@@ -28,6 +28,7 @@ from flurseg.ingest.session import SessionMetadata
 from flurseg.io.atomic import atomic_write_bytes
 from flurseg.io.hashing import sha256_file
 from flurseg.paths import RepoPaths, ensure_inside
+from flurseg.samples.extra.licences import is_acceptable_licence
 
 logger = logging.getLogger(__name__)
 
@@ -39,16 +40,8 @@ _last_wikimedia_request_at: float | None = None
 
 
 def _is_acceptable_commons_license(license_str: str) -> bool:
-    """Check whether a license string matches CC0, CC-BY, CC-BY-SA, or public domain."""
-    normalized = license_str.lower().strip()
-    # Explicitly exclude non-commercial and no-derivatives variants
-    if any(forbidden in normalized for forbidden in ("-nc", " nc", "noncommercial", "non-commercial", "-nd", " nd", "noderiv")):
-        return False
-    if any(token in normalized for token in ("cc0", "cc-0", "cc zero")):
-        return True
-    if any(token in normalized for token in ("public domain", "publicdomain", "pd-self", "pd-old", "pd-us")) or normalized == "pd":
-        return True
-    return any(token in normalized for token in ("cc-by", "cc by", "creative commons attribution"))
+    """Apply the shared model-compatible third-party data licence policy."""
+    return is_acceptable_licence(license_str)
 
 
 def _is_wikimedia_url(url: str) -> bool:
@@ -171,13 +164,14 @@ def open_url_with_retry(
     timeout: float = DEFAULT_TIMEOUT,
     retries: int = DEFAULT_RETRIES,
     method: str | None = None,
+    data: bytes | None = None,
 ) -> Any:
     """Send an HTTP request with exponential backoff and timeout handling."""
     request_headers = {"User-Agent": USER_AGENT}
     if headers:
         request_headers.update(headers)
 
-    request = urllib.request.Request(url, headers=request_headers, method=method)
+    request = urllib.request.Request(url, data=data, headers=request_headers, method=method)
     last_error: Exception | None = None
 
     maximum_retries = min(retries, DEFAULT_RETRIES)
@@ -189,7 +183,7 @@ def open_url_with_retry(
             last_error = error
             if attempt >= maximum_retries:
                 raise
-            if _is_wikimedia_url(url) and error.code in {429, 503}:
+            if error.code == 429 or (_is_wikimedia_url(url) and error.code == 503):
                 delay = _retry_after_seconds(error.headers.get("Retry-After"))
                 time.sleep(delay if delay is not None else 5.0 * (2 ** attempt))
             else:

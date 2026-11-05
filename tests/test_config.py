@@ -143,7 +143,7 @@ def test_rejects_invalid_find_similar_instance_score(tmp_root: Path) -> None:
 
 def test_rejects_overlap_below_minimum(tmp_root: Path) -> None:
     content = _pipeline(tmp_root)
-    content["tiling"]["min_overlap"] = 0.24
+    content["tiling"]["min_overlap"] = 0.04
     _save_pipeline(tmp_root, content)
     _assert_invalid(tmp_root)
 

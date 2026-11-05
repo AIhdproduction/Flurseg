@@ -14,6 +14,7 @@ __pycache__/
 /models/
 /input/
 /archive/
+/quarantine/
 /work/
 /review/
 /train/

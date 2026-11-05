@@ -87,6 +87,65 @@ def test_check_environment_returns_zero_when_only_warnings_remain(tmp_root: Path
     assert check_environment(RepoPaths.from_root(tmp_root), importer=_fake_importer) == 0
 
 
+def test_prelabel_dry_run_prints_estimate_and_processes_nothing(tmp_root: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    import numpy as np
+    from PIL import Image
+
+    input_path = tmp_root / "input" / "drone" / "session" / "image.jpg"
+    input_path.parent.mkdir(parents=True)
+    Image.fromarray(np.zeros((10, 10, 3), np.uint8)).save(input_path)
+    assert main(["prelabel", "--dry-run", "--root", str(tmp_root)]) == 0
+    assert input_path.exists()
+    assert "Prelabel estimate" in capsys.readouterr().out
+
+
+def test_prelabel_yes_skips_prompt_and_no_answer_processes_nothing(
+    tmp_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import numpy as np
+    from PIL import Image
+
+    first = tmp_root / "input" / "drone" / "yes" / "image.jpg"
+    first.parent.mkdir(parents=True)
+    Image.fromarray(np.zeros((10, 10, 3), np.uint8)).save(first)
+    monkeypatch.setattr("flurseg.cli.sys.stdin", SimpleNamespace(isatty=lambda: True))
+    monkeypatch.setattr("builtins.input", lambda *args: (_ for _ in ()).throw(AssertionError("prompted")))
+    assert main(["prelabel", "--backend", "fake", "--yes", "--root", str(tmp_root)]) == 0
+    assert not first.exists()
+
+    second = tmp_root / "input" / "drone" / "no" / "image.jpg"
+    second.parent.mkdir(parents=True)
+    Image.fromarray(np.zeros((10, 10, 3), np.uint8)).save(second)
+    monkeypatch.setattr("flurseg.cli.sys.stdin", SimpleNamespace(isatty=lambda: True))
+    monkeypatch.setattr("builtins.input", lambda *args: "n")
+    assert main(["prelabel", "--backend", "fake", "--root", str(tmp_root)]) == 0
+    assert second.exists()
+
+
+def test_prelabel_cli_passes_max_hours_and_preserves_session_order(tmp_root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from flurseg.ingest.discover import Candidate
+
+    candidates = [
+        Candidate(tmp_root / "third.jpg", "drone", "third"),
+        Candidate(tmp_root / "first.jpg", "drone", "first"),
+        Candidate(tmp_root / "second.jpg", "phone", "second"),
+    ]
+    calls: list[dict[str, Any]] = []
+    monkeypatch.setattr("flurseg.ingest.discover.discover", lambda paths: candidates)
+    monkeypatch.setattr("flurseg.pipeline.prelabel", lambda *args, **kwargs: calls.append(kwargs))
+    assert main(["prelabel", "--backend", "fake", "--yes", "--max-hours", "2.5", "--order", "session", "--root", str(tmp_root)]) == 0
+    assert calls[0]["max_hours"] == 2.5
+    assert calls[0]["candidates"] == candidates
+
+
+def test_prelabel_max_hours_rejects_non_positive_values() -> None:
+    parser = build_parser()
+    with pytest.raises(SystemExit):
+        parser.parse_args(["prelabel", "--max-hours", "0"])
+    with pytest.raises(SystemExit):
+        parser.parse_args(["prelabel", "--max-hours", "-1"])
+
+
 def test_build_dataset_cli_calls_target(
     tmp_root: Path,
     monkeypatch: pytest.MonkeyPatch,

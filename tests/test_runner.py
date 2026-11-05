@@ -37,6 +37,7 @@ def test_runner_records_per_class_prompt_winners_and_tta_disagreement(tmp_root) 
 
 def test_runner_reports_nonzero_disagreement_for_non_equivariant_backend(tmp_root) -> None:
     cfg = load_config(RepoPaths.from_root(tmp_root))
+    cfg.pipeline.tta.variants = ["identity", "rot90", "hflip", "vflip"]
     result = score_image(np.full((30, 40, 3), 120, np.uint8), FakeBackend(equivariant=False, disagreement=0.5), cfg)
     assert result.tta_disagreement.max() > 0
 

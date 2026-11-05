@@ -14,8 +14,16 @@ import numpy as np
 from skimage.segmentation import slic
 
 from flurseg.artifacts import ArtifactStore
+from flurseg.estimate import (
+    append_timing_entry,
+    count_variants,
+    format_duration,
+    order_candidates,
+    read_size,
+    timing_fingerprint,
+)
 from flurseg.fusion import fuse
-from flurseg.ingest.discover import discover
+from flurseg.ingest.discover import Candidate, discover
 from flurseg.ingest.ingest import archive_original, ingest_candidate
 from flurseg.manifest.db import Database
 from flurseg.manifest.repo import ManifestRepository
@@ -144,18 +152,20 @@ def _write_derived_artifacts(
     artifact.write_overlay(image, uncertainty.mask, colors, cfg.pipeline.ingest.jpeg_quality)
 
 
-def _process_record(record: dict[str, Any], cfg: Any, paths: Any, repository: ManifestRepository, backend: Any) -> Any:
+def _process_record(
+    record: dict[str, Any], cfg: Any, paths: Any, repository: ManifestRepository, backend: Any, *, clock: Any = time.monotonic
+) -> Any:
     artifact = ArtifactStore(Path(record["work_dir"]))
     image = artifact.read_image()
     scored = score_image(image, backend, cfg, exemplars_dir=paths.exemplars_dir)
     artifact_seconds = 0.0
-    artifact_started = time.monotonic()
+    artifact_started = clock()
     artifact.write_scores(scored.scores, scored.scales, scored.winner_per_class, scored.tta_std_per_class)
-    artifact_seconds += time.monotonic() - artifact_started
-    fusion_started = time.monotonic()
+    artifact_seconds += clock() - artifact_started
+    fusion_started = clock()
     fused = fuse(scored.scores, image.shape[:2], cfg)
-    fusion_seconds = time.monotonic() - fusion_started
-    refinement_started = time.monotonic()
+    fusion_seconds = clock() - fusion_started
+    refinement_started = clock()
     refined = refine(
         RefinementContext(
             image,
@@ -181,18 +191,18 @@ def _process_record(record: dict[str, Any], cfg: Any, paths: Any, repository: Ma
         cfg.pipeline.uncertainty,
         cfg.pipeline.fusion.priority_margin,
     )
-    refinement_seconds = time.monotonic() - refinement_started
-    artifact_started = time.monotonic()
+    refinement_seconds = clock() - refinement_started
+    artifact_started = clock()
     _write_derived_artifacts(
         artifact, image, fused.mask, refined, coarse_superpixels, prompt_winner, disagreement, uncertain, cfg
     )
-    artifact_seconds += time.monotonic() - artifact_started
+    artifact_seconds += clock() - artifact_started
     repository.transition(record["id"], "prelabeled", processing_seconds=scored.seconds, class_pixel_counts=_counts(uncertain.mask))
     current = repository.get(record["id"])
     assert current is not None
-    artifact_started = time.monotonic()
+    artifact_started = clock()
     decision = _route_record(current, image, uncertain.mask, artifact, cfg, paths, repository)
-    artifact_seconds += time.monotonic() - artifact_started
+    artifact_seconds += clock() - artifact_started
     tile_variants = int(scored.timings.get("tile_variants", 0.0))
     scale_tiles = ", ".join(
         f"{factor.removeprefix('tiles_')}={int(value)}"
@@ -211,14 +221,35 @@ def _process_record(record: dict[str, Any], cfg: Any, paths: Any, repository: Ma
     return decision
 
 
-def prelabel(paths: Any, cfg: Any, backend_factory: Any, *, limit: int | None = None) -> PipelineSummary:
+def prelabel(
+    paths: Any,
+    cfg: Any,
+    backend_factory: Any,
+    *,
+    limit: int | None = None,
+    max_hours: float | None = None,
+    order: str = "spread",
+    candidates: list[Candidate] | None = None,
+    clock: Any = time.monotonic,
+) -> PipelineSummary:
     """Ingest each new source, create all artifacts, route it and archive only successful originals."""
+    if max_hours is not None and max_hours <= 0:
+        raise ValueError("max_hours must be positive")
     paths.ensure_runtime_dirs()
     summary = PipelineSummary()
-    candidates = discover(paths)
+    candidates = order_candidates(discover(paths), order) if candidates is None else list(candidates)
     if limit is not None:
         candidates = candidates[:limit]
-    reporter = ProgressReporter(len(candidates))
+    # Duplicates receive weight zero after ingest, but total_weight retains their image cost.
+    # They are only discoverable while running, so the live ETA intentionally stays an upper bound.
+    weights = {
+        candidate.path: (size[0] * size[1] / 1_000_000 if (size := read_size(candidate.path)) else 0.0)
+        for candidate in candidates
+    }
+    reporter = ProgressReporter(len(candidates), total_weight=sum(weights.values()), human=True, clock=clock)
+    started = clock()
+    budget_reached = False
+    uncertain_reviews = 0
     with Database(paths.database) as connection:
         repository = ManifestRepository(connection)
         backend = _factory(backend_factory, cfg.pipeline)
@@ -228,17 +259,33 @@ def prelabel(paths: Any, cfg: Any, backend_factory: Any, *, limit: int | None = 
                     records = ingest_candidate(candidate, paths, repository, cfg, backend)
                     if not records:
                         summary.skipped_duplicates += 1
-                        reporter.advance()
+                        reporter.advance(weight=0)
+                        if max_hours is not None and clock() - started >= max_hours * 3600:
+                            budget_reached = True
+                            break
                         continue
                     successful = True
                     for inserted in records:
                         record = repository.get(inserted.id)
                         assert record is not None
                         try:
-                            decision = _process_record(record, cfg, paths, repository, backend)
+                            record_started = clock()
+                            decision = _process_record(record, cfg, paths, repository, backend, clock=clock)
+                            elapsed = clock() - record_started
+                            megapixels = record["width"] * record["height"] / 1_000_000
+                            append_timing_entry(
+                                paths.work_dir / "prelabel_timing.json",
+                                {
+                                    "fingerprint": timing_fingerprint(cfg.pipeline),
+                                    "variants": count_variants(record["width"], record["height"], cfg.pipeline),
+                                    "megapixels": megapixels,
+                                    "seconds": elapsed,
+                                },
+                            )
                             summary.auto_accepted += decision.status == "auto_accepted"
                             summary.needs_review += decision.status == "needs_review"
                             summary.spot_checks += decision.spot_check
+                            uncertain_reviews += decision.reason == "uncertain"
                         except Exception as error:  # noqa: BLE001 - one image must never stop the batch.
                             successful = False
                             summary.failed += 1
@@ -248,10 +295,29 @@ def prelabel(paths: Any, cfg: Any, backend_factory: Any, *, limit: int | None = 
                 except Exception as error:  # noqa: BLE001 - corrupt candidates have no image record yet.
                     summary.failed += 1
                     repository.record_error(str(candidate.path), "ingest", str(error), traceback.format_exc())
-                reporter.advance()
+                reporter.advance(weight=weights[candidate.path])
+                if max_hours is not None and clock() - started >= max_hours * 3600:
+                    budget_reached = True
+                    break
         finally:
             backend.close()
     print(f"auto-accepted={summary.auto_accepted} review={summary.needs_review} spot-checks={summary.spot_checks} failed={summary.failed} skipped-duplicates={summary.skipped_duplicates}")
+    elapsed = max(0.0, clock() - started)
+    processed = summary.auto_accepted + summary.needs_review + summary.failed
+    per_hour = processed / (elapsed / 3600) if elapsed > 0 else 0.0
+    uncertain = uncertain_reviews
+    print(
+        f"Duration: {format_duration(elapsed)} | images per hour: {per_hour:.1f} | auto-accepted: {summary.auto_accepted} | "
+        f"needs review (uncertain): {uncertain} | needs review (spot check): {summary.spot_checks} | "
+        f"failed: {summary.failed} | skipped duplicates: {summary.skipped_duplicates}"
+    )
+    print(
+        f"Open review.bat to check the {summary.needs_review} images that need review "
+        f"({uncertain} uncertain, {summary.spot_checks} spot checks)."
+    )
+    if budget_reached:
+        print("Time budget reached – run prelabel again to continue")
+        print(f"Remaining files: {len(candidates) - reporter.completed}")
     return summary
 
 

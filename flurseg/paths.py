@@ -50,6 +50,10 @@ class RepoPaths:
         return self.config_dir / "samples.yaml"
 
     @property
+    def extra_sources_config(self) -> Path:
+        return self.config_dir / "extra_sources.yaml"
+
+    @property
     def exemplars_dir(self) -> Path:
         return self.config_dir / "exemplars"
 
@@ -80,6 +84,11 @@ class RepoPaths:
     @property
     def archive_dir(self) -> Path:
         return self.root / "archive"
+
+    @property
+    def quarantine_dir(self) -> Path:
+        """Return the local quarantine directory for reversible file operations."""
+        return self.root / "quarantine"
 
     @property
     def work_dir(self) -> Path:
@@ -162,6 +171,14 @@ class RepoPaths:
         return self.root / "fetch_samples.bat"
 
     @property
+    def fetch_extra_script(self) -> Path:
+        return self.root / "fetch_extra.bat"
+
+    @property
+    def dedup_script(self) -> Path:
+        return self.root / "dedup.bat"
+
+    @property
     def license_file(self) -> Path:
         return self.root / "LICENSE"
 
@@ -195,6 +212,7 @@ class RepoPaths:
             self.phone_input_dir,
             self.ortho_input_dir,
             self.archive_dir,
+            self.quarantine_dir,
             self.work_dir,
             self.review_dir,
             self.train_dir,

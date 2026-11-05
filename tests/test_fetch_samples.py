@@ -203,7 +203,7 @@ def test_commons_license_and_width_filtering(
 
     pages = {
         "1": {
-            "title": "File:Accepted_CC_BY_SA.jpg",
+            "title": "File:Rejected_CC_BY_SA.jpg",
             "imageinfo": [{
                 "url": "https://upload.wikimedia.org/Accepted_CC_BY_SA.jpg",
                 "width": 2500,
@@ -303,7 +303,7 @@ def test_commons_license_and_width_filtering(
     records = fetch_samples(tmp_root)
     downloaded_names = {r["filename"] for r in records}
 
-    assert "Accepted_CC_BY_SA.jpg" in downloaded_names
+    assert "Accepted_CC_BY_SA.jpg" not in downloaded_names
     assert "Accepted_CC0.jpg" in downloaded_names
     assert "Accepted_PublicDomain.jpg" in downloaded_names
     assert "Rejected_Too_Small.jpg" not in downloaded_names

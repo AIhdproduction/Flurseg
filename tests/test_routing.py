@@ -57,6 +57,20 @@ def test_spot_check_rate_is_within_two_percent_of_ten_percent() -> None:
     assert 0.08 <= fraction <= 0.12
 
 
+def test_new_tolerance_accepts_good_enough_image_but_strict_tolerance_reviews_it() -> None:
+    mask = np.array([[255] * 12 + [1] * 88], np.uint8)
+    uncertainty = np.array([[0.9] * 5 + [0.0] * 95], np.float32)
+    assert decide(mask, uncertainty, "good-enough", False, _config(uncertain=0.06, ignore=0.15)).status == "auto_accepted"
+    assert decide(mask, uncertainty, "good-enough", False, _config(uncertain=0.03, ignore=0.10)).reason == "uncertain"
+    assert decide(mask, np.array([[0.9] * 8 + [0.0] * 92], np.float32), "too-uncertain", False, _config(uncertain=0.06, ignore=0.15)).reason == "uncertain"
+
+
+def test_new_spot_check_share_stays_near_four_percent() -> None:
+    config = _config(spot=0.04)
+    fraction = np.mean([decide(np.ones((1, 1), np.uint8), np.zeros((1, 1)), f"new-hash-{index}", False, config).spot_check for index in range(1000)])
+    assert 0.02 <= fraction <= 0.06
+
+
 def test_materialize_switches_between_pool_and_review_and_removes_stale_copy(tmp_root) -> None:
     paths = RepoPaths.from_root(tmp_root)
     image = np.full((3, 4, 3), 90, np.uint8)

@@ -119,7 +119,7 @@ class Sam3Config(StrictModel):
 
 class TilingConfig(StrictModel):
     tile_size: int = Field(gt=0)
-    min_overlap: float = Field(ge=0.25, lt=1)
+    min_overlap: float = Field(ge=0.05, lt=1)
 
 
 class ScaleAssignment(StrictModel):
@@ -308,9 +308,9 @@ class UncertaintyConfig(StrictModel):
 
 
 class RoutingConfig(StrictModel):
-    auto_accept_max_uncertain_fraction: float = Field(ge=0, le=1)
-    auto_accept_max_ignore_fraction: float = Field(default=0.10, ge=0, le=1)
-    spot_check_fraction: float = Field(ge=0, le=1)
+    auto_accept_max_uncertain_fraction: float = Field(default=0.06, ge=0, le=1)
+    auto_accept_max_ignore_fraction: float = Field(default=0.15, ge=0, le=1)
+    spot_check_fraction: float = Field(default=0.04, ge=0, le=1)
     seed: int
 
 

@@ -39,7 +39,7 @@ def decide(mask: np.ndarray, uncertainty: np.ndarray, image_hash: str, is_test_s
         return RoutingDecision("needs_review", "test_session", uncertain_fraction, ignore_fraction, classes, False)
     if (
         uncertain_fraction > routing.auto_accept_max_uncertain_fraction
-        or ignore_fraction > getattr(routing, "auto_accept_max_ignore_fraction", 0.10)
+        or ignore_fraction > getattr(routing, "auto_accept_max_ignore_fraction", 0.15)
     ):
         return RoutingDecision("needs_review", "uncertain", uncertain_fraction, ignore_fraction, classes, False)
     sampled = _spot_check(image_hash, routing.seed, routing.spot_check_fraction)

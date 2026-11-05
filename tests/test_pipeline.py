@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from types import SimpleNamespace
 from typing import Any
 
 import cv2
@@ -271,3 +272,87 @@ def test_prelabel_and_reprocess_coarse_superpixels(tmp_root) -> None:
     assert recomputed.shape == (200, 200)
     assert len(np.unique(recomputed)) == coarse_label_count
 
+
+def test_prelabel_stops_after_time_budget_and_second_run_continues(tmp_root, capsys) -> None:
+    paths = RepoPaths.from_root(tmp_root)
+    session = paths.drone_input_dir / "budget"
+    session.mkdir(parents=True)
+    _write_rgb(session / "first.jpg", 30)
+    _write_rgb(session / "second.jpg", 60)
+    cfg = _configured(paths)
+    calls = 0
+
+    def clock() -> float:
+        nonlocal calls
+        calls += 1
+        return 0.0 if calls <= 15 else 3700.0
+
+    first = prelabel(paths, cfg, FakeBackend, max_hours=1, clock=clock)
+    assert first.auto_accepted == 1
+    output = capsys.readouterr().out
+    assert "Time budget reached – run prelabel again to continue" in output
+    assert "Remaining files: 1" in output
+    second = prelabel(paths, cfg, FakeBackend)
+    assert second.auto_accepted == 1
+
+
+def test_prelabel_default_spread_order_and_duplicate_weight_zero(tmp_root, monkeypatch) -> None:
+    paths = RepoPaths.from_root(tmp_root)
+    session = paths.drone_input_dir / "spread"
+    session.mkdir(parents=True)
+    for index in range(4):
+        _write_rgb(session / f"image-{index}.jpg", index)
+    seen: list[str] = []
+    weights: list[float] = []
+
+    class Reporter:
+        def __init__(self, *args, **kwargs) -> None:
+            self.completed = 0
+
+        def advance(self, weight: float = 1.0) -> str:
+            self.completed += 1
+            weights.append(weight)
+            return ""
+
+    def duplicate(candidate, *args, **kwargs):
+        seen.append(candidate.path.name)
+        return []
+
+    monkeypatch.setattr(pipeline, "ProgressReporter", Reporter)
+    monkeypatch.setattr(pipeline, "ingest_candidate", duplicate)
+    prelabel(paths, _configured(paths), FakeBackend)
+    assert seen == ["image-0.jpg", "image-2.jpg", "image-1.jpg", "image-3.jpg"]
+    assert weights == [0, 0, 0, 0]
+
+
+def test_prelabel_final_summary_names_review_counts(tmp_root, capsys) -> None:
+    paths = RepoPaths.from_root(tmp_root)
+    session = paths.drone_input_dir / "review"
+    session.mkdir(parents=True)
+    _write_rgb(session / "image.jpg")
+    cfg = _configured(paths)
+    cfg.pipeline.routing.spot_check_fraction = 1.0
+    summary = prelabel(paths, cfg, FakeBackend)
+    output = capsys.readouterr().out
+    assert summary.needs_review == 1
+    assert "Open review.bat to check the 1 images that need review (0 uncertain, 1 spot checks)." in output
+
+
+def test_prelabel_summary_counts_uncertain_and_test_session_reasons_separately(tmp_root, monkeypatch, capsys) -> None:
+    paths = RepoPaths.from_root(tmp_root)
+    session = paths.drone_input_dir / "reasons"
+    session.mkdir(parents=True)
+    _write_rgb(session / "first.jpg", 70)
+    _write_rgb(session / "second.jpg", 90)
+    decisions = iter(
+        [
+            SimpleNamespace(status="needs_review", reason="uncertain", spot_check=False),
+            SimpleNamespace(status="needs_review", reason="test_session", spot_check=True),
+        ]
+    )
+    monkeypatch.setattr(pipeline, "_process_record", lambda *args, **kwargs: next(decisions))
+    summary = prelabel(paths, _configured(paths), FakeBackend)
+    output = capsys.readouterr().out
+    assert summary.needs_review == 2 and summary.spot_checks == 1
+    assert "needs review (uncertain): 1 | needs review (spot check): 1" in output
+    assert "(1 uncertain, 1 spot checks)." in output

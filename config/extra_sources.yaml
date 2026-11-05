@@ -1,0 +1,1006 @@
+# Additional AGPL-compatible imagery sources. Disabled entries remain documented
+# until their licence terms have been explicitly approved.
+sources:
+  - {id: ext_vegbilder_oslo, type: vegbilder_wfs, source: phone, session: ext_vegbilder_oslo, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Oslo, bbox: [10.62, 59.88, 10.90, 59.98]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_bergen, type: vegbilder_wfs, source: phone, session: ext_vegbilder_bergen, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Bergen, bbox: [5.28, 60.35, 5.40, 60.43]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_trondheim, type: vegbilder_wfs, source: phone, session: ext_vegbilder_trondheim, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Trondheim, bbox: [10.33, 63.40, 10.46, 63.45]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_stavanger, type: vegbilder_wfs, source: phone, session: ext_vegbilder_stavanger, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Stavanger, bbox: [5.68, 58.93, 5.78, 58.99]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_kristiansand, type: vegbilder_wfs, source: phone, session: ext_vegbilder_kristiansand, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Kristiansand, bbox: [7.95, 58.12, 8.10, 58.18]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_tromso, type: vegbilder_wfs, source: phone, session: ext_vegbilder_tromso, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Tromso, bbox: [18.88, 69.62, 19.05, 69.70]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_bodo, type: vegbilder_wfs, source: phone, session: ext_vegbilder_bodo, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Bodo, bbox: [14.35, 67.26, 14.45, 67.31]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_hardangervidda, type: vegbilder_wfs, source: phone, session: ext_vegbilder_hardangervidda, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Hardangervidda, bbox: [7.4, 60.1, 8.3, 60.7]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_finnmark, type: vegbilder_wfs, source: phone, session: ext_vegbilder_finnmark, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Finnmark, bbox: [24.0, 69.8, 25.8, 70.4]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_lofoten, type: vegbilder_wfs, source: phone, session: ext_vegbilder_lofoten, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Lofoten, bbox: [13.5, 68.0, 15.0, 68.4]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_alesund, type: vegbilder_wfs, source: phone, session: ext_vegbilder_alesund, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Alesund, bbox: [6.1, 62.4, 6.3, 62.5]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - {id: ext_vegbilder_dovre, type: vegbilder_wfs, source: phone, session: ext_vegbilder_dovre, url: https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows, layer_year: [2023, 2024, 2025], bboxes: [{name: Dovre, bbox: [9.2, 61.8, 10.0, 62.2]}], per_bbox: 50, min_spacing_m: 80, max_per_entry: 125, licence: NLOD-2.0, attribution: "© Statens vegvesen (Vegbilder), NLOD 2.0", session_yaml: {area_type: street}}
+  - id: nl_pdok_luchtfoto
+    type: wms
+    source: ortho
+    session: ext_nl_amsterdam_zuidas
+    url: https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0
+    layer: Actueel_orthoHR
+    crs: EPSG:28992
+    gsd_m: 0.08
+    bbox: [4.86, 52.33, 4.89, 52.35]
+    count: 4
+    licence: CC BY 4.0
+    attribution: Beeldmateriaal Nederland, PDOK, CC BY 4.0
+    session_yaml: {area_type: construction_site}
+  - id: nl_pdok_rotterdam_port
+    type: wms
+    source: ortho
+    session: ext_nl_rotterdam_port
+    url: https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0
+    layer: Actueel_orthoHR
+    crs: EPSG:28992
+    gsd_m: 0.08
+    bbox: [4.00, 51.94, 4.10, 51.97]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Beeldmateriaal Nederland, PDOK, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: nl_pdok_utrecht_leidsche_rijn
+    type: wms
+    source: ortho
+    session: ext_nl_utrecht_leidsche_rijn
+    url: https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0
+    layer: Actueel_orthoHR
+    crs: EPSG:28992
+    gsd_m: 0.08
+    bbox: [5.03, 52.07, 5.06, 52.09]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Beeldmateriaal Nederland, PDOK, CC BY 4.0
+    session_yaml: {area_type: residential}
+  - id: nl_pdok_eindhoven_brainport
+    type: wms
+    source: ortho
+    session: ext_nl_eindhoven_brainport
+    url: https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0
+    layer: Actueel_orthoHR
+    crs: EPSG:28992
+    gsd_m: 0.08
+    bbox: [5.42, 51.40, 5.47, 51.43]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Beeldmateriaal Nederland, PDOK, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: fr_ign_bd_ortho
+    type: wms
+    source: ortho
+    session: ext_fr_saint_denis_pleyel
+    url: https://data.geopf.fr/wms-r/wms
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+    crs: EPSG:2154
+    gsd_m: 0.2
+    bbox: [2.33, 48.91, 2.36, 48.93]
+    count: 4
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Â© IGN â€“ BD ORTHO, Licence Ouverte Etalab 2.0
+    session_yaml: {area_type: construction_site}
+  - id: fr_ign_lyon_confluence
+    type: wms
+    source: ortho
+    session: ext_fr_lyon_confluence
+    url: https://data.geopf.fr/wms-r/wms
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+    crs: EPSG:2154
+    gsd_m: 0.2
+    bbox: [4.81, 45.73, 4.83, 45.75]
+    count: 3
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN BD ORTHO, Licence Ouverte Etalab 2.0
+    session_yaml: {area_type: urban}
+  - id: fr_ign_marseille_euromediterranee
+    type: wms
+    source: ortho
+    session: ext_fr_marseille_euromediterranee
+    url: https://data.geopf.fr/wms-r/wms
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+    crs: EPSG:2154
+    gsd_m: 0.2
+    bbox: [5.36, 43.30, 5.39, 43.32]
+    count: 3
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN BD ORTHO, Licence Ouverte Etalab 2.0
+    session_yaml: {area_type: construction_site}
+  - id: fr_ign_toulouse_montaudran
+    type: wms
+    source: ortho
+    session: ext_fr_toulouse_montaudran
+    url: https://data.geopf.fr/wms-r/wms
+    layer: ORTHOIMAGERY.ORTHOPHOTOS
+    crs: EPSG:2154
+    gsd_m: 0.2
+    bbox: [1.48, 43.56, 1.51, 43.58]
+    count: 3
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN BD ORTHO, Licence Ouverte Etalab 2.0
+    session_yaml: {area_type: residential}
+  - id: de_nrw_dop10
+    type: wms
+    source: ortho
+    session: ext_de_duisburg_harbour
+    url: https://www.wms.nrw.de/geobasis/wms_nw_dop
+    layer: nw_dop_rgb
+    crs: EPSG:25832
+    gsd_m: 0.1
+    bbox: [6.73, 51.43, 6.80, 51.47]
+    count: 4
+    licence: dl-de/zero-2.0
+    attribution: Geobasis NRW, dl-de/zero-2.0
+    session_yaml: {area_type: urban}
+  - id: de_nrw_duesseldorf_medienhafen
+    type: wms
+    source: ortho
+    session: ext_de_duesseldorf_medienhafen
+    url: https://www.wms.nrw.de/geobasis/wms_nw_dop
+    layer: nw_dop_rgb
+    crs: EPSG:25832
+    gsd_m: 0.1
+    bbox: [6.73, 51.20, 6.76, 51.22]
+    count: 3
+    licence: dl-de/zero-2.0
+    attribution: Geobasis NRW, dl-de/zero-2.0
+    session_yaml: {area_type: urban}
+  - id: de_nrw_koeln_rheinau
+    type: wms
+    source: ortho
+    session: ext_de_koeln_rheinau
+    url: https://www.wms.nrw.de/geobasis/wms_nw_dop
+    layer: nw_dop_rgb
+    crs: EPSG:25832
+    gsd_m: 0.1
+    bbox: [6.98, 50.91, 7.00, 50.93]
+    count: 3
+    licence: dl-de/zero-2.0
+    attribution: Geobasis NRW, dl-de/zero-2.0
+    session_yaml: {area_type: construction_site}
+  - id: de_nrw_essen_krupp_guertel
+    type: wms
+    source: ortho
+    session: ext_de_essen_krupp_guertel
+    url: https://www.wms.nrw.de/geobasis/wms_nw_dop
+    layer: nw_dop_rgb
+    crs: EPSG:25832
+    gsd_m: 0.1
+    bbox: [6.99, 51.44, 7.02, 51.46]
+    count: 3
+    licence: dl-de/zero-2.0
+    attribution: Geobasis NRW, dl-de/zero-2.0
+    session_yaml: {area_type: residential}
+  - id: de_berlin_truedop
+    type: wms
+    source: ortho
+    session: ext_de_berlin_europacity
+    url: https://gdi.berlin.de/services/wms/truedop_2023
+    layer: truedop_2023
+    crs: EPSG:25833
+    gsd_m: 0.2
+    bbox: [13.36, 52.52, 13.38, 52.54]
+    count: 3
+    licence: dl-de/zero-2.0
+    attribution: Geoportal Berlin, dl-de/zero-2.0
+    session_yaml: {area_type: construction_site}
+  - id: de_berlin_tegel_urban_tech
+    type: wms
+    source: ortho
+    session: ext_de_berlin_tegel_urban_tech
+    url: https://gdi.berlin.de/services/wms/truedop_2023
+    layer: truedop_2023
+    crs: EPSG:25833
+    gsd_m: 0.2
+    bbox: [13.28, 52.55, 13.31, 52.57]
+    count: 3
+    licence: dl-de/zero-2.0
+    attribution: Geoportal Berlin, dl-de/zero-2.0
+    session_yaml: {area_type: construction_site}
+  - id: de_berlin_adlershof
+    type: wms
+    source: ortho
+    session: ext_de_berlin_adlershof
+    url: https://gdi.berlin.de/services/wms/truedop_2023
+    layer: truedop_2023
+    crs: EPSG:25833
+    gsd_m: 0.2
+    bbox: [13.52, 52.42, 13.55, 52.44]
+    count: 3
+    licence: dl-de/zero-2.0
+    attribution: Geoportal Berlin, dl-de/zero-2.0
+    session_yaml: {area_type: urban}
+  - id: es_pnoa_madrid
+    type: wms
+    source: ortho
+    session: ext_es_madrid
+    url: https://www.ign.es/wms-inspire/pnoa-ma
+    layer: OI.OrthoimageCoverage
+    crs: EPSG:25830
+    gsd_m: 0.25
+    bbox: [-3.69, 40.47, -3.64, 40.50]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Â© Instituto GeogrÃ¡fico Nacional de EspaÃ±a, PNOA, CC BY 4.0 scne.es
+    session_yaml: {area_type: construction_site}
+  # Licence not in the allowlist yet; approval is pending.
+  - id: es_pnoa_barcelona_22at
+    type: wms
+    source: ortho
+    session: ext_es_barcelona_22at
+    url: https://www.ign.es/wms-inspire/pnoa-ma
+    layer: OI.OrthoimageCoverage
+    crs: EPSG:25831
+    gsd_m: 0.25
+    bbox: [2.19, 41.39, 2.21, 41.41]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Instituto Geografico Nacional de Espana, PNOA, CC BY 4.0 scne.es
+    session_yaml: {area_type: urban}
+  - id: es_pnoa_valencia_port
+    type: wms
+    source: ortho
+    session: ext_es_valencia_port
+    url: https://www.ign.es/wms-inspire/pnoa-ma
+    layer: OI.OrthoimageCoverage
+    crs: EPSG:25830
+    gsd_m: 0.25
+    bbox: [-0.33, 39.44, -0.30, 39.46]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Instituto Geografico Nacional de Espana, PNOA, CC BY 4.0 scne.es
+    session_yaml: {area_type: urban}
+  - id: be_flanders_omw
+    type: wms
+    source: ortho
+    session: ext_be_flanders
+    enabled: false
+    url: https://geo.api.vlaanderen.be/OMW/wms
+    layer: OMWRGB25VL
+    crs: EPSG:31370
+    gsd_m: 0.25
+    bbox: [4.30, 50.80, 4.32, 50.82]
+    count: 3
+    licence: Modellicentie Gratis Hergebruik Vlaanderen
+    attribution: Vlaanderen OMW
+    session_yaml: {area_type: urban}
+  # Luxembourg ortho_latest via GLOBAL_WEBMERCATOR_4_V3: kept at zoom 19 (ground GSD ~0.193 m at lat 49.6; WMTS tile matrix is typically 19 for 20 cm ortho).
+  - id: lu_geoportail
+    type: xyz
+    source: ortho
+    session: ext_lu_kirchberg
+    url: https://wmts.geoportail.lu/opendata/wmts/ortho_latest/GLOBAL_WEBMERCATOR_4_V3/{z}/{x}/{y}.jpeg
+    zoom: 19
+    bbox: [6.15, 49.62, 6.18, 49.64]
+    count: 3
+    licence: CC0
+    attribution: © Administration du cadastre et de la topographie Luxembourg, CC0
+    session_yaml: {area_type: construction_site}
+  - id: lu_geoportail_esch_belval
+    type: xyz
+    source: ortho
+    session: ext_lu_esch_belval
+    url: https://wmts.geoportail.lu/opendata/wmts/ortho_latest/GLOBAL_WEBMERCATOR_4_V3/{z}/{x}/{y}.jpeg
+    zoom: 19
+    bbox: [5.93, 49.49, 5.96, 49.51]
+    count: 3
+    licence: CC0
+    attribution: Administration du cadastre et de la topographie Luxembourg, CC0
+    session_yaml: {area_type: urban}
+  - id: lu_geoportail_luxembourg_gare
+    type: xyz
+    source: ortho
+    session: ext_lu_luxembourg_gare
+    url: https://wmts.geoportail.lu/opendata/wmts/ortho_latest/GLOBAL_WEBMERCATOR_4_V3/{z}/{x}/{y}.jpeg
+    zoom: 19
+    bbox: [6.12, 49.59, 6.14, 49.61]
+    count: 3
+    licence: CC0
+    attribution: Administration du cadastre et de la topographie Luxembourg, CC0
+    session_yaml: {area_type: urban}
+  # GSI terms need confirmation before commercial training use.
+  - id: jp_gsi_seamlessphoto
+    type: xyz
+    source: ortho
+    session: ext_jp_gsi
+    enabled: false
+    url: https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg
+    zoom: 18
+    bbox: [139.70, 35.65, 139.72, 35.67]
+    count: 3
+    licence: Unknown
+    attribution: Geospatial Information Authority of Japan
+    session_yaml: {area_type: urban}
+  - id: us_dc_ortho_2025
+    type: arcgis_export
+    source: ortho
+    session: ext_us_dc_navy_yard
+    url: https://imagery.dcgis.dc.gov/dcgis/rest/services/Ortho/Ortho_2025/ImageServer/exportImage
+    crs: EPSG:3857
+    gsd_m: 0.075
+    bbox: [-77.03, 38.86, -77.00, 38.88]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Office of the Chief Technology Officer, DC, CC BY 4.0
+    session_yaml: {area_type: construction_site}
+  - id: us_dc_ortho_noma
+    type: arcgis_export
+    source: ortho
+    session: ext_us_dc_noma
+    url: https://imagery.dcgis.dc.gov/dcgis/rest/services/Ortho/Ortho_2025/ImageServer/exportImage
+    crs: EPSG:3857
+    gsd_m: 0.075
+    bbox: [-77.01, 38.90, -77.00, 38.91]
+    count: 3
+    licence: CC BY 4.0
+    attribution: Office of the Chief Technology Officer, DC, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: nz_linz_auckland
+    type: stac_static
+    source: ortho
+    session: ext_nz_auckland_cbd
+    url: https://nz-imagery.s3-ap-southeast-2.amazonaws.com/auckland/auckland-central_2023_0.06m/rgb/2193/collection.json
+    target_gsd_m: 0.06
+    bboxes: [[174.755, -36.855, 174.775, -36.842]]
+    licence: CC BY 4.0
+    attribution: "Source: LINZ and Auckland Council, CC BY 4.0"
+    session_yaml: {area_type: construction_site}
+  - id: nz_linz_penrose
+    type: stac_static
+    source: ortho
+    session: ext_nz_penrose_industrial
+    url: https://nz-imagery.s3-ap-southeast-2.amazonaws.com/auckland/auckland-central_2023_0.06m/rgb/2193/collection.json
+    target_gsd_m: 0.06
+    bboxes: [[174.80, -36.92, 174.84, -36.89]]
+    licence: CC BY 4.0
+    attribution: "Source: LINZ and Auckland Council, CC BY 4.0"
+    session_yaml: {area_type: urban}
+  - id: oam_europe
+    type: stac_search
+    source: ortho
+    session: ext_oam_europe
+    url: https://api.imagery.hotosm.org/stac/search
+    bboxes: [[-10, 35, 30, 60]]
+    max_items: 8
+    windows_per_item: 2
+    max_gsd_m: 0.05
+    licence: CC BY 4.0
+    attribution: OpenAerialMap, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: oam_africa
+    type: stac_search
+    source: ortho
+    session: ext_oam_africa
+    url: https://api.imagery.hotosm.org/stac/search
+    bboxes: [[-20, -35, 52, 37]]
+    max_items: 8
+    windows_per_item: 2
+    max_gsd_m: 0.05
+    licence: CC BY 4.0
+    attribution: OpenAerialMap, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: oam_south_america
+    type: stac_search
+    source: ortho
+    session: ext_oam_south_america
+    url: https://api.imagery.hotosm.org/stac/search
+    bboxes: [[-82, -56, -34, 13]]
+    max_items: 8
+    windows_per_item: 2
+    max_gsd_m: 0.05
+    licence: CC BY 4.0
+    attribution: OpenAerialMap, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: oam_southeast_asia
+    type: stac_search
+    source: ortho
+    session: ext_oam_southeast_asia
+    url: https://api.imagery.hotosm.org/stac/search
+    bboxes: [[90, -11, 141, 28]]
+    max_items: 8
+    windows_per_item: 2
+    max_gsd_m: 0.05
+    licence: CC BY 4.0
+    attribution: OpenAerialMap, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: oam_north_america
+    type: stac_search
+    source: ortho
+    session: ext_oam_north_america
+    url: https://api.imagery.hotosm.org/stac/search
+    bboxes: [[-130, 24, -60, 50]]
+    max_items: 8
+    windows_per_item: 2
+    max_gsd_m: 0.05
+    licence: CC BY 4.0
+    attribution: OpenAerialMap, CC BY 4.0
+    session_yaml: {area_type: urban}
+
+  # Street-level imagery: only individual accepted licences are downloaded.
+  - id: ext_commons_construction_us
+    type: commons_categories
+    source: phone
+    session: ext_commons_construction_us
+    categories: [Construction sites in the United States]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 70
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_commons_construction_europe
+    type: commons_categories
+    source: phone
+    session: ext_commons_construction_europe
+    categories: [Construction sites in Poland, Construction sites in Sweden, Construction sites in Italy, Construction sites in Germany, Construction sites in France, Construction sites in Spain, Construction sites in the Netherlands]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_commons_construction_world
+    type: commons_categories
+    source: phone
+    session: ext_commons_construction_world
+    categories: [Construction sites in Japan, Construction sites in Brazil, Construction sites in Singapore, Building sites]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_commons_construction_equipment
+    type: commons_categories
+    source: phone
+    session: ext_commons_construction_equipment
+    categories: [Excavators, Tower cranes, Concrete mixers, Construction equipment, Scaffolding, Scaffolding in Germany, Site huts, Dump trucks]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_commons_roadworks_europe
+    type: commons_categories
+    source: phone
+    session: ext_commons_roadworks_europe
+    categories: [Roadworks, Roadworks in the United Kingdom, Roadworks in the Netherlands, Roadworks in France, Roadworks in Germany]
+    depth: 2
+    min_width: 1600
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_roadworks_world
+    type: commons_categories
+    source: phone
+    session: ext_commons_roadworks_world
+    categories: [Roadworks in Japan, Roadworks in the United States]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 70
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_manholes_europe
+    type: commons_categories
+    source: phone
+    session: ext_commons_manholes_europe
+    categories: [Manhole covers, Manhole covers in Germany, Manhole covers in the Netherlands, Manhole covers in the United Kingdom, Storm drains, Kerbs]
+    depth: 2
+    min_width: 1600
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_manholes_jp
+    type: commons_categories
+    source: phone
+    session: ext_commons_manholes_jp
+    categories: [Manhole covers in Japan]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 70
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_manholes_us
+    type: commons_categories
+    source: phone
+    session: ext_commons_manholes_us
+    categories: [Manhole covers in the United States]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 70
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_road_markings
+    type: commons_categories
+    source: phone
+    session: ext_commons_road_markings
+    categories: [Road markings, Road markings in Germany, Road markings in the United States, Road markings in the United Kingdom, Road markings in France, Pedestrian crossings]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_industrial
+    type: commons_categories
+    source: phone
+    session: ext_commons_industrial
+    categories: [Industrial areas]
+    depth: 1
+    min_width: 1600
+    max_per_entry: 70
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: urban}
+
+  # Commons Public domain tags on some dashcam footage (for example China) are questionable.
+  - id: ext_commons_dashcam_videos
+    type: commons_video_frames
+    source: phone
+    session: ext_commons_dashcam_videos
+    categories: [Dashcam videos]
+    exclude_categories: [Dashcam footage of China]
+    depth: 2
+    max_videos: 30
+    max_frames_per_video: 40
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_driving_videos
+    type: commons_video_frames
+    source: phone
+    session: ext_commons_driving_videos
+    categories: [Videos of driving]
+    depth: 2
+    max_videos: 30
+    max_frames_per_video: 40
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_roads_videos
+    type: commons_video_frames
+    source: phone
+    session: ext_commons_roads_videos
+    categories: [Videos of roads]
+    depth: 2
+    max_videos: 30
+    max_frames_per_video: 40
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+
+  - id: ext_panoramax_paris_pleyel
+    type: panoramax
+    source: phone
+    session: ext_panoramax_paris_pleyel
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [2.33, 48.91, 2.36, 48.93]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_panoramax_lyon
+    type: panoramax
+    source: phone
+    session: ext_panoramax_lyon
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [4.81, 45.73, 4.86, 45.77]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_bordeaux
+    type: panoramax
+    source: phone
+    session: ext_panoramax_bordeaux
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [-0.56, 44.81, -0.53, 44.83]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_panoramax_nantes
+    type: panoramax
+    source: phone
+    session: ext_panoramax_nantes
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [-1.57, 47.20, -1.53, 47.23]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_toulouse
+    type: panoramax
+    source: phone
+    session: ext_panoramax_toulouse
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [1.42, 43.58, 1.47, 43.62]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_lille
+    type: panoramax
+    source: phone
+    session: ext_panoramax_lille
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [3.04, 50.62, 3.08, 50.65]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_marseille
+    type: panoramax
+    source: phone
+    session: ext_panoramax_marseille
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [5.36, 43.30, 5.39, 43.32]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: construction_site}
+  - id: ext_panoramax_brussels
+    type: panoramax
+    source: phone
+    session: ext_panoramax_brussels
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [4.33, 50.83, 4.38, 50.86]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_rennes
+    type: panoramax
+    source: phone
+    session: ext_panoramax_rennes
+    # all CC-BY-SA in practice, superseded by IGN/Vee entries
+    enabled: false
+    bbox: [-1.70, 48.10, -1.66, 48.12]
+    max_per_entry: 80
+    licence: Etalab Licence Ouverte 2.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+
+  - id: ext_panoramax_ign_paris
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_paris
+    instance: https://panoramax.ign.fr/api
+    bbox: [2.30, 48.84, 2.36, 48.88]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_ign_lyon
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_lyon
+    instance: https://panoramax.ign.fr/api
+    bbox: [4.80, 45.74, 4.88, 45.78]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_ign_marseille
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_marseille
+    instance: https://panoramax.ign.fr/api
+    bbox: [5.35, 43.28, 5.42, 43.33]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_ign_rennes
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_rennes
+    instance: https://panoramax.ign.fr/api
+    bbox: [-1.72, 48.09, -1.64, 48.13]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_ign_strasbourg
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_strasbourg
+    instance: https://panoramax.ign.fr/api
+    bbox: [7.72, 48.56, 7.78, 48.60]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_ign_reunion
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_reunion
+    instance: https://panoramax.ign.fr/api
+    bbox: [55.42, -20.93, 55.50, -20.86]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_ign_berlin
+    type: panoramax
+    source: phone
+    session: ext_panoramax_ign_berlin
+    instance: https://panoramax.ign.fr/api
+    bbox: [13.30, 52.48, 13.45, 52.55]
+    max_per_entry: 120
+    licence: Etalab Licence Ouverte 2.0
+    attribution: IGN Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_vee_sweden
+    type: panoramax
+    source: phone
+    session: ext_panoramax_vee_sweden
+    instance: https://panoramax.vee.network/api
+    bbox: [14.0, 57.5, 14.4, 57.8]
+    max_per_entry: 100
+    licence: CC0
+    attribution: Vee Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_meta_flat_paris
+    type: panoramax
+    source: phone
+    session: ext_panoramax_meta_flat_paris
+    mode: collections_prefilter
+    flat_only: true
+    bbox: [2.30, 48.84, 2.36, 48.88]
+    max_per_entry: 120
+    licence: CC BY 4.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+  - id: ext_panoramax_meta_flat_berlin
+    type: panoramax
+    source: phone
+    session: ext_panoramax_meta_flat_berlin
+    mode: collections_prefilter
+    flat_only: true
+    bbox: [13.30, 52.48, 13.45, 52.55]
+    max_per_entry: 120
+    licence: CC BY 4.0
+    attribution: Panoramax, per-image attribution
+    session_yaml: {area_type: street}
+
+  - id: ext_amsterdam_zuidas
+    type: amsterdam_panorama
+    source: phone
+    session: ext_amsterdam_zuidas
+    near: [4.87, 52.34]
+    max_per_entry: 40
+    licence: CC BY 4.0
+    attribution: © Gemeente Amsterdam, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: ext_amsterdam_ndsm
+    type: amsterdam_panorama
+    source: phone
+    session: ext_amsterdam_ndsm
+    near: [4.89, 52.40]
+    max_per_entry: 40
+    licence: CC BY 4.0
+    attribution: © Gemeente Amsterdam, CC BY 4.0
+    session_yaml: {area_type: urban}
+  - id: ext_amsterdam_bijlmer
+    type: amsterdam_panorama
+    source: phone
+    session: ext_amsterdam_bijlmer
+    near: [4.95, 52.32]
+    max_per_entry: 40
+    licence: CC BY 4.0
+    attribution: © Gemeente Amsterdam, CC BY 4.0
+    session_yaml: {area_type: urban}
+
+  - id: ext_commons_from_car_moving
+    type: commons_categories
+    source: phone
+    session: ext_commons_from_car_moving
+    categories: [Photographs taken from moving automobiles]
+    depth: 2
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_from_car_views
+    type: commons_categories
+    source: phone
+    session: ext_commons_from_car_views
+    categories: [Views from automobiles]
+    depth: 1
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_from_car_country
+    type: commons_categories
+    source: phone
+    session: ext_commons_from_car_country
+    categories: [Views from automobiles by country]
+    depth: 2
+    max_per_entry: 150
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_from_car_bus
+    type: commons_categories
+    source: phone
+    session: ext_commons_from_car_bus
+    categories: [Photographs taken from moving buses]
+    depth: 2
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_from_car_windshield
+    type: commons_categories
+    source: phone
+    session: ext_commons_from_car_windshield
+    categories: [Views framed by windshields]
+    depth: 1
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+  - id: ext_commons_from_car_driving
+    type: commons_categories
+    source: phone
+    session: ext_commons_from_car_driving
+    categories: [Driving]
+    depth: 1
+    max_per_entry: 80
+    licence: CC BY 4.0
+    attribution: Wikimedia Commons, per-file attribution
+    session_yaml: {area_type: street}
+
+  # Only items whose own licenseurl passes are used; uploader-owned footage is preferred.
+  - id: ext_ia_dashcam_cc_by_4
+    type: internet_archive
+    source: phone
+    session: ext_ia_dashcam_cc_by_4
+    search_query: '(dashcam OR "dash cam") AND mediatype:movies'
+    max_videos: 25
+    max_frames_per_video: 40
+    max_per_entry: 1000
+    max_download_gb: 3
+    prefer: derivative
+    licence: CC BY 4.0
+    attribution: Internet Archive, per-item attribution
+    session_yaml: {area_type: street}
+  - id: ext_ia_fhwa_cc0
+    type: internet_archive
+    source: phone
+    session: ext_ia_fhwa_cc0
+    identifier_glob: gov.*fhwa*
+    max_videos: 40
+    max_frames_per_video: 20
+    max_per_entry: 800
+    max_download_gb: 3
+    licence: CC0
+    attribution: Internet Archive, per-item attribution
+    session_yaml: {area_type: construction_site}
+
+  - id: ext_rdd2022
+    type: archive_dataset
+    source: phone
+    session: ext_rdd2022
+    # 13.3 GB archive exceeds the configured download limit.
+    enabled: false
+    figshare_article: 21431547
+    expected_licence: CC BY 4.0
+    subset: 'train.*/images/.*'
+    max_per_group: 120
+    max_per_entry: 1200
+    max_download_gb: 3
+    licence: CC BY 4.0
+    attribution: Arya et al., RDD2022, CC BY 4.0
+    session_yaml: {area_type: street}
+  - id: ext_zenodo_plitterstreet
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_plitterstreet
+    # 12.79 GB archive exceeds the configured download limit.
+    enabled: false
+    zenodo_record: 8288500
+    expected_licence: CC BY 4.0
+    max_images: 300
+    max_per_entry: 300
+    max_download_gb: 3
+    licence: CC BY 4.0
+    attribution: Plitterstreet dataset, CC BY 4.0
+    session_yaml: {area_type: street}
+  - id: ext_zenodo_indian_dashcam
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_indian_dashcam
+    # Source is a RAR archive, which is intentionally unsupported without an extra dependency.
+    enabled: false
+    zenodo_record: 15869374
+    expected_licence: CC BY 4.0
+    max_images: 300
+    max_per_entry: 300
+    max_download_gb: 3
+    licence: CC BY 4.0
+    attribution: Indian dashcam dataset, CC BY 4.0
+    session_yaml: {area_type: street}
+  - id: ext_zenodo_irdd
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_irdd
+    zenodo_record: 21167531
+    expected_licence: CC BY 4.0
+    max_images: 300
+    max_per_entry: 300
+    max_download_gb: 3
+    licence: CC BY 4.0
+    attribution: IRDD dataset, CC BY 4.0
+    session_yaml: {area_type: street}
+  - id: ext_hf_winter_driving
+    type: archive_dataset
+    source: phone
+    session: ext_hf_winter_driving
+    hf_dataset: AD-Assurance-Lab/winter-driving-dataset
+    expected_licence: CC BY 4.0
+    max_images: 300
+    max_per_entry: 300
+    max_download_gb: 3
+    licence: CC BY 4.0
+    attribution: AD Assurance Lab winter driving dataset, CC BY 4.0
+    session_yaml: {area_type: street}
+  # Frame provenance unclear.
+  - id: ext_zenodo_22301900
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_22301900
+    enabled: false
+    zenodo_record: 22301900
+    expected_licence: CC BY 4.0
+    licence: CC BY 4.0
+    attribution: Zenodo record 22301900
+    session_yaml: {area_type: street}
+  # Image sources unverified.
+  - id: ext_zenodo_3764792
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_3764792
+    enabled: false
+    zenodo_record: 3764792
+    expected_licence: CC BY 4.0
+    licence: CC BY 4.0
+    attribution: Zenodo record 3764792
+    session_yaml: {area_type: street}
+  # DNIT terms unchecked.
+  - id: ext_zenodo_18327797
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_18327797
+    enabled: false
+    zenodo_record: 18327797
+    expected_licence: CC BY 4.0
+    licence: CC BY 4.0
+    attribution: Zenodo record 18327797
+    session_yaml: {area_type: street}
+  # 21 GB, huge.
+  - id: ext_zenodo_21370736
+    type: archive_dataset
+    source: phone
+    session: ext_zenodo_21370736
+    enabled: false
+    zenodo_record: 21370736
+    expected_licence: CC BY 4.0
+    licence: CC BY 4.0
+    attribution: Zenodo record 21370736
+    session_yaml: {area_type: street}
+
